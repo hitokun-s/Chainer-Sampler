@@ -50,14 +50,14 @@ print(len(mnist['data'][0])) # 784 = 28 * 28
 mnist['target'] = mnist['target'].astype(np.int32)
 print(mnist['target'])
 
-n_units = 60000
+n_units = 1000
 model = L.Classifier(net.MnistMLP(784, n_units, 10))
 
 optimizer = optimizers.Adam()
 optimizer.setup(model)
 
-serializers.load_npz('data/mlp.model', model)
-serializers.load_npz('data/mlp.state', optimizer)
+serializers.load_npz('tmp/mlp.model', model)
+serializers.load_npz('tmp/mlp.state', optimizer)
 
 # print(model)
 # model = L.Classifier(net.MnistMLP(784, n_units, 10))

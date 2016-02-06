@@ -121,6 +121,6 @@ for epoch in six.moves.range(1, n_epoch + 1):
 
 # Save the model and the optimizer
 print('save the model')
-serializers.save_npz('data/mlp.model', model)
+serializers.save_npz('tmp/mlp.model', model)
 print('save the optimizer')
-serializers.save_npz('data/mlp.state', optimizer)
+serializers.save_npz('tmp/mlp.state', optimizer)
