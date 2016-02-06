@@ -34,9 +34,9 @@ parser.add_argument('--gpu', '-g', default=-1, type=int,
                     help='GPU ID (negative value indicates CPU)')
 args = parser.parse_args()
 
-batchsize = 20
+batchsize = 100
 n_epoch = 20
-n_units = 100
+n_units = 1000
 
 # Prepare dataset
 print('load MNIST dataset')
@@ -45,7 +45,7 @@ mnist['data'] = mnist['data'].astype(np.float32)
 mnist['data'] /= 255
 mnist['target'] = mnist['target'].astype(np.int32)
 
-N = 20
+N = 60000
 x_train, x_test = np.split(mnist['data'],   [N])
 y_train, y_test = np.split(mnist['target'], [N])
 N_test = y_test.size

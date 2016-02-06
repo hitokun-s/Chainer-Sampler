@@ -50,7 +50,7 @@ print(len(mnist['data'][0])) # 784 = 28 * 28
 mnist['target'] = mnist['target'].astype(np.int32)
 print(mnist['target'])
 
-n_units = 100
+n_units = 60000
 model = L.Classifier(net.MnistMLP(784, n_units, 10))
 
 optimizer = optimizers.Adam()
