@@ -48,7 +48,9 @@ for patch in patches:
 ##################################
 
 hist, bins = np.histogram(dist, bins=13, range=(0,260))
-print hist # 各binのカウント数
-print bins # 各binの集計域の開始値（この場合は、0, 20, 40, 60, ...）
+
+print hist.__class__
+print hist # 各binのカウント数の配列（ndarray）
+print bins # 各binの集計域の開始値の配列（ndarray）（この場合は、0, 20, 40, 60, ...）
 
 # 判別分析法により、二値化の閾値を算定する
