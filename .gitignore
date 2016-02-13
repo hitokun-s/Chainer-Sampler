@@ -3,3 +3,4 @@
 *.pyc
 mnist/tmp/
 char74k/data/
+char74k/binarized/
