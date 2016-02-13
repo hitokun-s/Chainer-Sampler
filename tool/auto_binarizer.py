@@ -31,9 +31,9 @@ def th(arr):
 
 def binarize(ndArr):
     threshold = th(ndArr.flatten())
-    print "threshold:%d" % threshold
+    # print "threshold:%d" % threshold
     (rowCnt, colCnt) = ndArr.shape
-    print "row:%d, col:%d" % (rowCnt,colCnt)
+    # print "row:%d, col:%d" % (rowCnt,colCnt)
     for i in range(rowCnt):
         for j in range(colCnt):
             ndArr[i][j] = 1 if ndArr[i][j] > threshold else 0
