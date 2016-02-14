@@ -70,7 +70,9 @@ def forward(x_data):
     h = F.dropout(F.relu(model.l1(h)), train=False)
     y = model.l2(h)
     answers = np.argmax(y.data, axis=1)
-    confidences = F.accuracy(y, chainer.Variable(answers.astype(np.int32))).data
+    t = chainer.Variable(answers.astype(np.int32))
+    print(F.softmax_cross_entropy(y, t).data)
+    confidences = F.accuracy(y, t).data
     return (answers, confidences)
 
 
@@ -82,10 +84,10 @@ def prepare(ndArr):
 
 data_3 = np.load("../char74k/binarized/3_3.npy")
 answers, confidences = forward(prepare(data_3[:3]))
-print(answers)
+print("answers:%s, confidences:%s" % (str(answers), str(confidences)))
 
 data_e = np.load("../char74k/binarized/14_E.npy")
-answers, confidences = forward(prepare(data_e[6:10]))
-print(answers)
+answers, confidences = forward(prepare(data_e[0:60]))
+print("answers:%s, confidences:%s" % (str(answers), str(confidences)))
 
 

@@ -12,6 +12,7 @@ arr2 = np.array([[1, 2, 3, 4], [5, 6, 7, 8]])
 assert arr2.size == 8
 assert len(arr2) == 2
 assert arr2.shape[0] == len(arr2)
+assert np.array_equal(np.sum(arr2, axis=1), np.array([10,26]))
 assert np.array_equal(np.amax(arr2, axis=1), np.array([4,8]))
 assert np.array_equal(np.argmax(arr2, axis=1), np.array([3,3]))
 
