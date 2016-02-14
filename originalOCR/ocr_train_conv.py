@@ -27,13 +27,14 @@ parser.add_argument('--resume', '-r', default='',
                     help='Resume the optimization from snapshot')
 parser.add_argument('--net', '-n', choices=('simple', 'parallel'),
                     default='simple', help='Network type')
-parser.add_argument('--gpu', '-g', default=-1, type=int,
-                    help='GPU ID (negative value indicates CPU)')
+
+parser.add_argument('--gpu', '-g', default=-1, type=int)
+parser.add_argument('--epoch', '-e', default=20, type=int)
+
 args = parser.parse_args()
 
 batchsize = 100
-n_epoch = 20
-n_units = 1000
+n_epoch = args.epoch
 
 inputCnt = 50 * 50
 classCnt = 62
@@ -74,18 +75,6 @@ y_train, y_test = np.split(target, [N])
 N_test = y_test.size
 
 print("test sample size:%d" % y_test.size)
-
-# Prepare multi-layer perceptron model, defined in net.py
-# if args.net == 'simple':
-#     model = L.Classifier(net.MnistMLP(inputCnt, n_units, classCnt))
-#     if args.gpu >= 0:
-#         cuda.get_device(args.gpu).use()
-#         model.to_gpu()
-#     xp = np if args.gpu < 0 else cuda.cupy
-# elif args.net == 'parallel':
-#     cuda.check_cuda_available()
-#     model = L.Classifier(net.MnistMLPParallel(inputCnt, n_units, classCnt))
-#     xp = cuda.cupy
 
 use_gpu = args.gpu >= 0
 if use_gpu:
