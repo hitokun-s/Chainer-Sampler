@@ -9,6 +9,8 @@ assert np.array_equal(arr + 1, np.array([2, 3, 4, 5]))
 
 arr2 = np.array([[1, 2, 3, 4], [5, 6, 7, 8]])
 assert arr2.size == 8
+assert len(arr2) == 2
+assert arr2.shape[0] == len(arr2)
 
 # bit inversion
 arr3 = np.array([1, 0, 1, 1, 0])
@@ -30,3 +32,9 @@ for i, v in np.ndenumerate(arr4):
 res = np.array(res)
 assert res.size == 12
 assert np.count_nonzero(res) == 9
+
+# ランダムに並び変える、ランダムサンプリング
+arr5 = np.array([1,2,3,4,5])
+perm = np.random.permutation(5)
+print perm # ランダムに並べたインデックス
+print arr5[perm] # ランダムに並べた値
