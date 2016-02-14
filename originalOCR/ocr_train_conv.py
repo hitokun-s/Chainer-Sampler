@@ -90,6 +90,7 @@ print("test sample size:%d" % y_test.size)
 if args.gpu < 0:
     xp = np
 else:
+    cuda.check_cuda_available()
     xp = cuda.cupy
     cuda.get_device(args.gpu).use()
     print("You are using GPU!")
