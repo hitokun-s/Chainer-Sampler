@@ -70,6 +70,8 @@ def forward(x_data):
     h = F.dropout(F.relu(model.l1(h)), train=False)
     y = model.l2(h)
     answers = np.argmax(y.data, axis=1)
+    print("answers dtype:%s" % answers.dtype)
+    print("y.data dtype:%s" % y.data.dtype)
     confidences = F.accuracy(y, chainer.Variable(answers)).data
     return (answers, confidences)
 
