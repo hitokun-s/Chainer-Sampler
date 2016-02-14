@@ -87,13 +87,15 @@ print("test sample size:%d" % y_test.size)
 #     model = L.Classifier(net.MnistMLPParallel(inputCnt, n_units, classCnt))
 #     xp = cuda.cupy
 
-if args.gpu < 0:
-    xp = np
-else:
+use_gpu = args.gpu >= 0
+if use_gpu:
     cuda.check_cuda_available()
     xp = cuda.cupy
     cuda.get_device(args.gpu).use()
-    print("You are using GPU!")
+else:
+    xp = np
+
+print("using GPU:%s" % use_gpu)
 
 # 画像を (nsample, channel, height, width) の4次元テンソルに変換
 # MNISTはチャンネル数が1なのでreshapeだけでOK
@@ -106,6 +108,9 @@ model = chainer.FunctionSet(conv1=F.Convolution2D(1, 20, 5, stride=2),   # 入�
                             conv2=F.Convolution2D(20, 50, 5),  # 入力20枚、出力50枚、フィルタサイズ5ピクセル
                             l1=F.Linear(800, 500),
                             l2=F.Linear(500, classCnt))
+
+if use_gpu:
+    model.to_gpu()
 
 def forward(x_data, y_data, train=True):
     x, t = chainer.Variable(x_data), chainer.Variable(y_data)
@@ -207,6 +212,9 @@ print(end_time - start_time)
 #
 #     print('test  mean loss={}, accuracy={}'.format(
 #         sum_loss / N_test, sum_accuracy / N_test))
+
+# CPU環境でも学習済みモデルを読み込めるようにCPUに移してからダンプ
+model.to_cpu()
 
 # Save the model and the optimizer
 print('save the model')
