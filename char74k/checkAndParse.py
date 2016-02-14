@@ -8,12 +8,9 @@ import matplotlib.cm as cm
 
 import codecs
 
-
 def ccc(name):
     if name.lower() == 'windows-31j':
         return codecs.lookup('utf-8')
-
-
 codecs.register(ccc)
 
 
@@ -74,13 +71,15 @@ assert len(res["classnames"]) == 62
 data = {}
 
 for i, dirName in enumerate(res["classnames"]):
-    dir = 'data/English/Img/' + dirName
+    dir = 'data/English/Img/' + dirName # dirNameの例：'GoodImg/Bmp/Sample001'
     fileNames = os.listdir(dir)
-    fileCount = len([name for name in fileNames if os.path.isfile(os.path.join(dir, name))])
 
-    print "i:%d,dir:%s,file count:%d" % (i, dir, fileCount)
+    images = [plt.imread('data/English/Img/' + dirName + '/' + name, 'bmp') for name in fileNames if name.split(".")[1] == "png"]
 
-    images = [plt.imread('data/English/Img/' + dirName + '/' + name, 'bmp') for name in fileNames]
-    np.save('parsed/%d_%s.npy' % (i, labels[i]), np.array(images))
+    fnt_dir = 'data/English/Fnt/' + dirName.split("/")[2]
+    fntFileNames = os.listdir(fnt_dir)
+    fnt_images = [plt.imread(fnt_dir + '/' + name, 'bmp') for name in fntFileNames if name.split(".")[1] == "png"]
 
-    print "label:%s, fileCount:%d" % (labels[i], fileCount)
+    np.save('parsed/%d_%s.npy' % (i, labels[i]), np.array(images + fnt_images))
+
+    print "label:%s, fileCount:%d" % (labels[i], len(images) + len(fnt_images))

@@ -9,3 +9,7 @@ assert str1[:2] == "ab"
 
 # 変数展開
 assert "bool value:%s" % True == "bool value:True"
+
+# split
+str2 = "path/to/some/dir"
+assert str2.split("/") == ["path","to","some","dir"]

@@ -56,8 +56,8 @@ for fileName in fileNames:
 data = np.array(data, dtype=np.float32)
 target = np.array(target, dtype=np.int32)
 
-print("data count:%d" % data.shape[0])
-print("target count:%d" % target.size)
+print("data count:%d" % len(data))
+print("target count:%d" % len(target))
 
 # randomize order
 randomized_idx = np.random.permutation(target.size)
