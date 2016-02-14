@@ -209,6 +209,6 @@ print(end_time - start_time)
 
 # Save the model and the optimizer
 print('save the model')
-serializers.save_npz('tmp/mlp.model', model)
+serializers.save_npz('model/mlp.model', model)
 print('save the optimizer')
-serializers.save_npz('tmp/mlp.state', optimizer)
+serializers.save_npz('model/mlp.state', optimizer)
