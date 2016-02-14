@@ -1,18 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""Chainer example: train a multi-layer perceptron on MNIST
-
-This is a minimal example to write a feed-forward net.
-
-"""
 from __future__ import print_function
 import argparse
 
 import numpy as np
 import six
 
-import chainer, os, net, time
+import chainer, os, time
 from chainer import computational_graph
 from chainer import cuda
 import chainer.links as L

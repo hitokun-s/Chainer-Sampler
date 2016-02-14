@@ -7,7 +7,6 @@ import numpy as np
 from tool.auto_binarizer import *
 from PIL import Image
 
-
 def pilToNumPy(pilImg):
     imgArray = np.asarray(pilImg)
     imgArray.flags.writeable = True
@@ -19,7 +18,7 @@ def numPyToPIL(imgArr):
 def toGrayScale(pilImg):
     return pilImg.convert("L")
 
-# 正方形に切り出して、所定サイズに変形
+# 中心から最大サイズの正方形を切り出して、所定サイズに変形
 def standardize(pilImg):
     width, height = pilImg.size
     # ex. crop((left, top, right, bottom)) => crop((450, 516, 1011, 872))
@@ -35,10 +34,12 @@ def standardize(pilImg):
     pilImg.crop((left, top, right, bottom))
     return pilImg.resize((50, 50))
 
+# 白黒反転
 def invert(binaryArr):
-    f = np.vectorize(lambda x : 1 - x)
+    f = np.vectorize(lambda x : 1 - x) # 全要素に作用する関数を作成（xは各要素の値）
     return f(binaryArr)
 
+# 白黒反転すべきか
 def should_invert(ndArr):
     assert ndArr.shape == (50,50)
     arr = []
