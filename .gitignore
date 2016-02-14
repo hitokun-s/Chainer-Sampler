@@ -4,3 +4,5 @@
 mnist/tmp/
 char74k/data/
 char74k/binarized/
+char74k/parsed/
+
