@@ -9,7 +9,10 @@ assert __name__ == "__main__"
 
 print __file__  # 本ファイルのパス
 print os.path.dirname(__file__) # 本ファイルのディレクトリ
-print os.path.dirname(os.path.dirname(__file__)) # 本ファイルのディレクトリの親ディレクトリ
+
+# さらに親ディレクトリの取得方法2通り
+print "parent dir:%s" % os.path.dirname(os.path.dirname(__file__))
+print "parent dir:%s" % os.path.dirname(os.getcwd())  #（windowsだとフォルダ区切り文字が円マークになる）
 
 # OS依存のパス、カレントディレクトリ（windowsだとフォルダ区切り文字が円マークになる）
 print os.path.realpath(__file__)
