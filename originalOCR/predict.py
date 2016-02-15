@@ -2,24 +2,16 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import print_function
+
 import argparse
-
-import numpy as np
-import six
-
 import chainer
-from chainer import computational_graph
-from chainer import cuda
-import chainer.links as L
-from chainer import optimizers
-from chainer import serializers
-
 import numpy as np
+import os
+from chainer import cuda
 
 #Chainer Specific
-from chainer import FunctionSet, Variable, optimizers, serializers
+from chainer import Variable, optimizers, serializers
 import chainer.functions as F
-import chainer.links as L
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--gpu', '-g', default=-1, type=int)
@@ -57,8 +49,8 @@ model = chainer.FunctionSet(conv1=F.Convolution2D(1, 20, 5, stride=2),   # 入�
 optimizer = optimizers.Adam()
 optimizer.setup(model)
 
-serializers.load_npz('model/mlp.model', model) # modelはCPUモードにして保存したはず
-serializers.load_npz('model/mlp.state', optimizer)
+serializers.load_npz(os.path.dirname(__file__) + '/model/mlp.model', model) # modelはCPUモードにして保存したはず
+serializers.load_npz(os.path.dirname(__file__) + '/model/mlp.state', optimizer)
 
 if use_gpu:
     model.to_gpu()
@@ -71,7 +63,7 @@ def forward(x_data):
     y = model.l2(h)
     answers = np.argmax(y.data, axis=1)
     t = chainer.Variable(answers.astype(np.int32))
-    print(F.softmax_cross_entropy(y, t).data)
+    # print(F.softmax_cross_entropy(y, t).data)
     confidences = F.accuracy(y, t).data
     return (answers, confidences)
 
@@ -82,12 +74,17 @@ def prepare(ndArr):
     # MNISTはチャンネル数が1なのでreshapeだけでOK
     return ndArr.reshape((len(ndArr), 1, 50, 50))
 
-data_3 = np.load("../char74k/binarized/3_3.npy")
-answers, confidences = forward(prepare(data_3[:3]))
-print("answers:%s, confidences:%s" % (str(answers), str(confidences)))
+def predict(xArr):
+    return forward(prepare(xArr))
 
-data_e = np.load("../char74k/binarized/14_E.npy")
-answers, confidences = forward(prepare(data_e[0:60]))
-print("answers:%s, confidences:%s" % (str(answers), str(confidences)))
+if __name__ == '__main__':
+
+    data_3 = np.load("../char74k/binarized/3_3.npy")
+    answers, confidences = predict(data_3[:3])
+    print("answers:%s, confidences:%s" % (str(answers), str(confidences)))
+
+    data_e = np.load("../char74k/binarized/14_E.npy")
+    answers, confidences = predict(data_e[0:60])
+    print("answers:%s, confidences:%s" % (str(answers), str(confidences)))
 
 

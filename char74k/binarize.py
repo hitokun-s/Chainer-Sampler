@@ -50,21 +50,20 @@ def should_invert(ndArr):
     # 外周要素の半数以上が１なら反転の必要がある
     return np.count_nonzero(arr) > arr.size / 2
 
-fileNames = os.listdir("parsed")
+if __name__ == '__main__':
+    fileNames = os.listdir("parsed")
 
-for fileName in fileNames:
-    print "let's go to " + fileName
-    res = []
-    images = np.load("parsed/" + fileName)
-    for img in images:
-        grayScaled = toGrayScale(numPyToPIL(img))
-        standardized = standardize(grayScaled)
-        grayed = pilToNumPy(standardized)
-        grayed = binarize(grayed) # 戻り値はndarray
-        if should_invert(grayed):
-            grayed = invert(grayed)
-        res.append(grayed)
-    binarized = np.array(res)
-    np.save("binarized/" + fileName, binarized)
-
-
+    for fileName in fileNames:
+        print "let's go to " + fileName
+        res = []
+        images = np.load("parsed/" + fileName)
+        for img in images:
+            grayScaled = toGrayScale(numPyToPIL(img))
+            standardized = standardize(grayScaled)
+            grayed = pilToNumPy(standardized)
+            grayed = binarize(grayed) # 戻り値はndarray
+            if should_invert(grayed):
+                grayed = invert(grayed)
+            res.append(grayed)
+        binarized = np.array(res)
+        np.save("binarized/" + fileName, binarized)

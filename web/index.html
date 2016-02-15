@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>osmtest</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" type="text/css" href="static/css/bootstrap.min.css">
+    <script type="text/javascript" src="static/js/jquery.min.js"></script>
+    <script type="text/javascript">
+        var canvas;
+        window.onload = function () {
+            canvas = document.getElementById('canvas1');
+            if (!canvas || !canvas.getContext) {
+                return false;
+            }
+            var ctx = canvas.getContext('2d');
+
+            //白指定
+            ctx.fillStyle = 'rgb(255, 255, 255)';
+            //全体を塗りつぶす
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            var isDrawing = false;
+
+            canvas.onmousemove = function (e) {
+                if (isDrawing) {
+                    ctx.beginPath();
+                    ctx.arc(e.clientX, e.clientY, 10, 0, Math.PI * 2, false);
+                    ctx.stroke();
+                    ctx.fillStyle = '#000';
+                    ctx.fill();
+                }
+            }
+
+            canvas.onmousedown = function (e) {
+                isDrawing = true;
+            }
+
+            canvas.onmouseup = function (e) {
+                isDrawing = false;
+            }
+
+            canvas.onmouseout = function (e) {
+                isDrawing = false;
+            }
+        };
+
+        function saveImage() {
+            var imgdata = canvas.toDataURL("image/png");  // デフォルトだとpng, 引数でjpegとかも可能
+            //alert(imgdata);
+            imgdata = imgdata.replace('data:image/png;base64,', '');  // 頭のいらない部分を落とす
+
+            $.ajax({
+                type: "POST",
+                url: "query",
+                data: {"img": imgdata},
+                async: false,
+                success: function (data) {
+                    console.log(data);
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log(textStatus);
+                }
+            });
+        }
+    </script>
+
+</head>
+<body>
+<div>
+    <canvas id="canvas1" width="300" height="300" style="border: solid 3px #000;"></canvas>
+</div>
+<input type="button" value="save" onclick="saveImage();">
+</body>
+</html>
