@@ -16,13 +16,13 @@ from originalOCR.predict import *
 
 app = Flask(__name__, static_url_path='/static')
 
-
-# app = Flask(__name__)
+@app.route('/')
+def root():
+    print "here"
+    return send_from_directory('', "index.html")
 
 @app.route('/<path:path>')
 def send_js(path):
-    if path is None:
-        path = "index.html"
     return send_from_directory('', path)
 
 class_labels = list("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz")
