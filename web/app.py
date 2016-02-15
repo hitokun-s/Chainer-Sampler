@@ -18,7 +18,6 @@ app = Flask(__name__, static_url_path='/static')
 
 @app.route('/')
 def root():
-    print "here"
     return send_from_directory('', "index.html")
 
 @app.route('/<path:path>')
@@ -41,7 +40,7 @@ def query():
     grayed = binarize(grayed)  # 戻り値はndarray
     if should_invert(grayed):
         grayed = invert(grayed)
-    print grayed
+    # print grayed
     try:
         classIdx = predict(np.array([grayed]))[0][0]
         answer = class_labels[classIdx]
