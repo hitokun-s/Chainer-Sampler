@@ -7,7 +7,7 @@ import traceback, sys, os
 from flask import Flask, request, send_from_directory
 
 # add project base dir to module search path ( for importing char74k, originalOCR)
-tgt_dir = os.path.dirname(os.path.dirname(__file__))
+tgt_dir = os.path.dirname(os.getcwd())
 sys.path.append(tgt_dir)
 print "path added:%s" % tgt_dir
 
