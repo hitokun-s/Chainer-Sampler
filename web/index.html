@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>osmtest</title>
+    <title>OCR</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <link rel="stylesheet" type="text/css" href="static/css/bootstrap.min.css">
     <script type="text/javascript" src="static/js/jquery.min.js"></script>
@@ -26,21 +26,18 @@
             canvas.onmousemove = function (e) {
                 if (isDrawing) {
                     ctx.beginPath();
-                    ctx.arc(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop, 10, 0, Math.PI * 2, false);
+                    ctx.arc(e.pageX - canvas.offsetLeft, e.pageY - canvas.offsetTop, 10, 0, Math.PI * 2, false);
                     ctx.stroke();
                     ctx.fillStyle = '#000';
                     ctx.fill();
                 }
             }
-
             canvas.onmousedown = function (e) {
                 isDrawing = true;
             }
-
             canvas.onmouseup = function (e) {
                 isDrawing = false;
             }
-
             canvas.onmouseout = function (e) {
                 isDrawing = false;
             }
@@ -49,7 +46,6 @@
         var saveImage = function() {
             var imgdata = canvas.toDataURL("image/png");  // デフォルトだとpng, 引数でjpegとかも可能
             imgdata = imgdata.replace('data:image/png;base64,', '');  // 頭のいらない部分を落とす
-
             $.ajax({
                 type: "POST",
                 url: "query",
@@ -79,6 +75,8 @@
 </head>
 <body>
 <div class="container">
+    <h1>OCR</h1>
+    <p>Please write sigle alphabet or number, and push 'Query'.</p>
     <div class="center-block">
         <canvas id="canvas1" width="300" height="300"></canvas>
         <div>
