@@ -23,7 +23,7 @@
 
             var isDrawing = false;
 
-            canvas.onmousemove = function (e) {
+            canvas.ontouchmove = canvas.onmousemove = function (e) {
                 if (isDrawing) {
                     ctx.beginPath();
                     ctx.arc(e.pageX - canvas.offsetLeft, e.pageY - canvas.offsetTop, 10, 0, Math.PI * 2, false);
@@ -32,10 +32,10 @@
                     ctx.fill();
                 }
             }
-            canvas.onmousedown = function (e) {
+            canvas.ontouchstart = canvas.onmousedown = function (e) {
                 isDrawing = true;
             }
-            canvas.onmouseup = function (e) {
+            canvas.ontouchend = canvas.onmouseup = function (e) {
                 isDrawing = false;
             }
             canvas.onmouseout = function (e) {
