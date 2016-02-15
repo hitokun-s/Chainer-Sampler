@@ -80,6 +80,16 @@
         .center-block{
             width:300px;
         }
+        #answer-wrapper{
+            vertical-align: middle;
+            font-size: 1.5em;
+        }
+        #answer{
+            color: red;
+        }
+        #canvas1{
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -92,7 +102,7 @@
         <div>
             <button class="btn btn-primary" onclick="saveImage();">Query</button>
             <button class="btn btn-danger" onclick="clearImage();">Clear</button>
-            <text>Answer:<span id="answer">?</span></text>
+            <text id="answer-wrapper">Answer:<span id="answer">?</span></text>
         </div>
     </div>
 </div>
