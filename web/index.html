@@ -23,6 +23,10 @@
 
             var isDrawing = false;
 
+            document.ontouchmove = document.onmousemove = function (e) {
+                e.preventDefault();
+            }
+
             canvas.ontouchmove = canvas.onmousemove = function (e) {
                 if (isDrawing) {
                     ctx.beginPath();
