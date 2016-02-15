@@ -2,9 +2,13 @@
 # -*- coding: utf-8 -*-
 
 import cStringIO
-import traceback
+import traceback, sys, os
 
 from flask import Flask, request, send_from_directory
+
+# add project base dir to module search path ( for importing char74k, originalOCR)
+tgt_dir = os.path.dirname(os.path.dirname(__file__))
+sys.path.append(tgt_dir)
 
 from char74k.binarize import *
 from originalOCR.predict import *
