@@ -5,6 +5,7 @@ import cStringIO
 import traceback, sys, os
 
 from flask import Flask, request, send_from_directory
+from flask import jsonify
 
 # add project base dir to module search path ( for importing char74k, originalOCR)
 tgt_dir = os.path.dirname(os.getcwd())
@@ -42,12 +43,15 @@ def query():
         grayed = invert(grayed)
     # print grayed
     try:
-        classIdx = predict(np.array([grayed]))[0][0]
+        prediction = predict(np.array([grayed]))
+        classIdx = prediction[0][0]
+        confidence = prediction[1][0]
         answer = class_labels[classIdx]
+        print answer
     except:
-        print traceback.format_exc()
+        print traceback.format_exc() # stacktrace
 
-    return answer
+    return jsonify(dict(answer=answer, confidence=int(confidence * 100)))
 
 
 if __name__ == '__main__':

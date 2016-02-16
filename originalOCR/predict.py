@@ -64,8 +64,11 @@ def forward(x_data):
     answers = np.argmax(y.data, axis=1)
     t = chainer.Variable(answers.astype(np.int32))
     # print(F.softmax_cross_entropy(y, t).data)
-    confidences = F.accuracy(y, t).data
-    return (answers, confidences)
+    e_s = np.exp(y.data) # 各サンプルの各入力値の指数を取る
+    z_s = e_s.sum(axis=1) # 各サンプルごとに、指数の和を計算
+    probabilities = e_s[np.arange(len(e_s)), answers] / z_s # 各サンプルごとに、e_s / z_s の最大値（＝最大確率）を取得＝Softmax関数
+    # confidences = F.accuracy(y, t).data
+    return (answers, probabilities)
 
 
 def prepare(ndArr):

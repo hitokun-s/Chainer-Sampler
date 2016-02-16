@@ -12,6 +12,7 @@
             ctx.fillStyle = 'rgb(255, 255, 255)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             $("#answer").text("?");
+            $("#confidence").text("?");
         }
 
         window.onload = function () {
@@ -57,8 +58,8 @@
                 url: "query",
                 data: {"img": imgdata},
                 success: function (data) {
-//                    console.log("got response!:" + data);
-                    $("#answer").text(data);
+                    $("#answer").text(data.answer);
+                    $("#confidence").text(data.confidence);
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
                     console.log("got error!");
@@ -69,7 +70,7 @@
     </script>
     <style>
         html,body{
-            overflow: hidden
+            overflow: hidden;
             height: 100%
         }
         body{
@@ -80,6 +81,7 @@
         }
         .center-block{
             width:300px;
+            margin-top: 20px;
         }
         #answer-wrapper{
             vertical-align: middle;
@@ -98,12 +100,13 @@
     <h1>OCR</h1>
     <p>Trained by Convolutional Neural Network.</p>
     <p>Please write a single alphabet or number, and push 'Query'.</p>
+    <p>You will get an answer with confidence(%).</p>
     <div class="center-block">
         <canvas id="canvas1" width="300" height="300"></canvas>
         <div>
             <button class="btn btn-primary" onclick="saveImage();">Query</button>
             <button class="btn btn-danger" onclick="clearImage();">Clear</button>
-            <text id="answer-wrapper">Answer:<span id="answer">?</span></text>
+            <text id="answer-wrapper">Answer:<span id="answer">?</span>(<span id="confidence">?</span>%)</text>
         </div>
     </div>
 </div>
