@@ -11,6 +11,7 @@
         var clearImage = function(){
             ctx.fillStyle = 'rgb(255, 255, 255)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
+            $("#answer").text("?");
         }
 
         window.onload = function () {
@@ -56,7 +57,7 @@
                 url: "query",
                 data: {"img": imgdata},
                 success: function (data) {
-                    console.log("got response!:" + data);
+//                    console.log("got response!:" + data);
                     $("#answer").text(data);
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -95,7 +96,7 @@
 <body>
 <div class="container">
     <h1>OCR</h1>
-    <p>Implemented with Deep Learning(Convolutiional Network).</p>
+    <p>Trained by Convolutional Neural Network.</p>
     <p>Please write a single alphabet or number, and push 'Query'.</p>
     <div class="center-block">
         <canvas id="canvas1" width="300" height="300"></canvas>
