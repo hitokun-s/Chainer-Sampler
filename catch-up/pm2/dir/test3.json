@@ -1,0 +1,16 @@
+{
+  "name"             : "pm2_test",
+  "cwd"              : "dir",
+  "args"             : ["--hoge=1"],
+  "script"           : "pm2_test.js",
+  "node_args"        : [],
+  "log_date_format"  : "YYYY-MM-DD HH:mm Z",
+  "error_file"       : "logs/error.log",
+  "out_file"         : "logs/system.log",
+  "env": {
+    "NODE_ENV": "development"
+  },
+  "env_production" : {
+    "NODE_ENV": "production"
+  }
+}
