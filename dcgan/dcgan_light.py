@@ -37,7 +37,7 @@ image_dir = './images48'
 out_image_dir = './out_images'
 out_model_dir = './out_models'
 
-nz = 100  # # of dim for Z
+nz = 30  # # of dim for Z
 batchsize = 100
 n_epoch = 10000
 n_train = 200000
