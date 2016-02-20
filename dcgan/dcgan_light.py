@@ -245,6 +245,7 @@ def train_dcgan_labeled(gen, dis, epoch0=0):
                     # tmp = ((np.vectorize(clip_img)(x[i_, :, :, :]) + 1) / 2).transpose(1, 2, 0)
                     tmp = np.vectorize(clip_img)(x[i_, 0, :, :])
                     pylab.subplot(10, 10, i_ + 1)
+                    pylab.gray()
                     pylab.imshow(tmp)
                     pylab.axis('off')
                 pylab.savefig('%s/vis_%d_%d.png' % (out_image_dir, epoch, i))
