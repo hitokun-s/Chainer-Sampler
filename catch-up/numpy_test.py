@@ -71,3 +71,14 @@ rands = np.random.uniform(0.0, 1.0, 5)
 print rands
 rands = np.random.uniform(0.0, 1.0, (5,5))
 print rands
+
+arr10 = np.array([
+    [[1,2,3],[2,3,4],[3,4,5]],
+    [[1,3,5],[2,4,6],[3,5,7]],
+    [[1,2,3],[2,3,5],[3,5,8]]
+])
+# :はワイルドカードと思えばいい
+print arr10[1,:,1] # => [3,4,5]
+print arr10[:,:,::-1] # 最小単位内で逆順になる
+arr10[0,0,:] = [9,9,9]
+print arr10
