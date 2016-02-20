@@ -65,3 +65,9 @@ assert np.array_equal(arr7, np.array([0,1,2,3,4]))
 arr8 = np.array([2,4,6]).astype(float)
 arr9 = np.array([4,4,4])
 assert np.array_equal(arr8 / arr9, np.array([0.5,1.0,1.5]))
+
+# 一様分布に従うデータ（＝一様乱数）を5個生成
+rands = np.random.uniform(0.0, 1.0, 5)
+print rands
+rands = np.random.uniform(0.0, 1.0, (5,5))
+print rands

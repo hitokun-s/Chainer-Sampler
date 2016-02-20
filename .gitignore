@@ -7,3 +7,5 @@ char74k/binarized/
 char74k/parsed/
 
 originalOCR/model/
+dcgan/images/
+originalOCR/out_images/
