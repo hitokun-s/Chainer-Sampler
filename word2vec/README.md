@@ -9,3 +9,6 @@ You can find top-5 nearest embedding vectors using `search.py`.
 
 This example is based on the following word embedding implementation in C++.
 https://code.google.com/p/word2vec/
+
+参考：  
+[http://chainernlpman.hatenablog.com/entry/2015/12/02/022151](http://chainernlpman.hatenablog.com/entry/2015/12/02/022151)  

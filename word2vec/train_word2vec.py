@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 """Sample script of word embedding model.
 
 This code implements skip-gram model and continuous-bow model.
@@ -114,20 +116,37 @@ def calculate_loss(model, dataset, position):
 if args.gpu >= 0:
     cuda.get_device(args.gpu).use()
 
-index2word = {}
-word2index = {}
-counts = collections.Counter()
-dataset = []
-with open('ptb.train.txt') as f:
-    for line in f:
-        for word in line.split():
-            if word not in word2index:
-                ind = len(word2index)
-                word2index[word] = ind
-                index2word[ind] = word
-            counts[word2index[word]] += 1
-            dataset.append(word2index[word])
+index2word = {} # 順引辞書
+word2index = {} # 逆引辞書
 
+# 出現回数辞書（キーは単語ID）
+counts = collections.Counter()
+
+# 文書全体を単語IDリストに変換したもの
+dataset = []
+
+# with open('ptb.train.txt') as f:
+#     for line in f:
+#         for word in line.split(): # スペースで分割
+#             # 新出単語だったら、順引辞書、逆引辞書に登録
+#             if word not in word2index:
+#                 ind = len(word2index)
+#                 word2index[word] = ind # 新出単語にIDを付与
+#                 index2word[ind] = word # ID辞書に登録
+#             counts[word2index[word]] += 1 # 出現回数をカウント
+#             dataset.append(word2index[word]) # 単語IDを全体データに追加
+
+import pickle
+f = open("data/pickle.dump", "r")
+data = pickle.load(f)
+f.close()
+
+word2index = data["word2index"]
+index2word = data["index2word"]
+counts = data["count"]
+dataset = data["dataset"]
+
+# 登場単語数（重複なし）
 n_vocab = len(word2index)
 
 print('n_vocab: %d' % n_vocab)
