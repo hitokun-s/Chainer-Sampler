@@ -136,14 +136,17 @@ dataset = []
 #             counts[word2index[word]] += 1 # 出現回数をカウント
 #             dataset.append(word2index[word]) # 単語IDを全体データに追加
 
-import pickle
-f = open("data/pickle.dump", "r")
-data = pickle.load(f)
-f.close()
+# import pickle
+# f = open("data/pickle.dump", "r")
+# data = pickle.load(f)
+# f.close()
+
+from prepare_data import *
+data = doExec()
 
 word2index = data["word2index"]
 index2word = data["index2word"]
-counts = data["count"]
+counts = data["counts"]
 dataset = data["dataset"]
 
 # 登場単語数（重複なし）
