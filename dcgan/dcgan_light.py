@@ -39,7 +39,7 @@ out_model_dir = './out_models'
 
 nz = 30  # # of dim for Z
 batchsize = 52
-n_epoch = 1000
+n_epoch = 10000
 n_train = 52
 image_save_interval = 51
 
@@ -232,7 +232,8 @@ def train_dcgan_labeled(gen, dis, epoch0=0):
 
             # print "backward done"
 
-            if i % image_save_interval == 0:
+            # if i % image_save_interval == 0:
+            if epoch % 20 == 0:
                 pylab.rcParams['figure.figsize'] = (16.0, 16.0)
                 pylab.clf()
                 vissize = 100
