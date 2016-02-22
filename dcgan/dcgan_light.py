@@ -38,10 +38,10 @@ out_image_dir = './out_images'
 out_model_dir = './out_models'
 
 nz = 30  # # of dim for Z
-batchsize = 100
-n_epoch = 10000
-n_train = 200000
-image_save_interval = 50000
+batchsize = 62
+n_epoch = 1000
+n_train = 62
+image_save_interval = 61
 
 fs = os.listdir(image_dir)
 print len(fs)

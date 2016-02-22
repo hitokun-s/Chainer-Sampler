@@ -175,11 +175,12 @@ def train_dcgan_labeled(gen, dis, epoch0=0):
 
     zvis = (generate_rand(-1, 1, (100, nz), dtype=np.float32))
 
-    for epoch in xrange(epoch0, n_epoch):
+    for epoch in xrange(epoch0, n_epoch): # epoch0 : 0, n_epoch : 10000
         perm = np.random.permutation(n_train)
         sum_l_dis = np.float32(0)
         sum_l_gen = np.float32(0)
 
+        # n_train : 200000, batchsize : 100
         for i in xrange(0, n_train, batchsize):
             # discriminator
             # 0: from dataset

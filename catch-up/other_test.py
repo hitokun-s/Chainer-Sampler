@@ -29,3 +29,6 @@ try:
     var1 = 1/ 0
 except:
     print traceback.format_exc()
+
+# 0 から始まる差分10の等差数列を、200まで作る（200は含まない）
+arr = xrange(0, 200, 10) # [0,10,20,30,...,.190]
