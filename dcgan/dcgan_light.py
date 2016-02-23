@@ -77,10 +77,10 @@ def binarize(ndArr, th=50):
 
 def train_dcgan_labeled(gen, dis, o_gen, o_dis, epoch0=0):
 
-    o_gen.setup(gen)
-    o_dis.setup(dis)
-    o_gen.add_hook(chainer.optimizer.WeightDecay(0.00001))
-    o_dis.add_hook(chainer.optimizer.WeightDecay(0.00001))
+    # o_gen.setup(gen)
+    # o_dis.setup(dis)
+    # o_gen.add_hook(chainer.optimizer.WeightDecay(0.00001))
+    # o_dis.add_hook(chainer.optimizer.WeightDecay(0.00001))
 
     zvis = (generate_rand(-1, 1, (100, nz), dtype=np.float32))
 
@@ -171,6 +171,10 @@ gen = Generator(nz=nz)
 dis = Discriminator()
 o_gen = optimizers.Adam(alpha=0.0002, beta1=0.5)
 o_dis = optimizers.Adam(alpha=0.0002, beta1=0.5)
+o_gen.setup(gen)
+o_dis.setup(dis)
+o_gen.add_hook(chainer.optimizer.WeightDecay(0.00001))
+o_dis.add_hook(chainer.optimizer.WeightDecay(0.00001))
 
 if using_gpu:
     gen.to_gpu()
