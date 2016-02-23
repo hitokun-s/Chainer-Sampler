@@ -55,7 +55,15 @@ for fn in fs:
     f.close()
 print len(dataset)
 
-
+# sizeは、1次元なら数字、多次元ならタプル
+def generate_rand(low, hight, size, dtype=np.float32):
+    global using_gpu
+    if using_gpu:
+        # この書き方だと、xp = cuda.cupy なら良いが、xp = np の場合にエラーになる
+        generated = xp.random.uniform(low, hight, size, dtype=dtype)
+    else:
+        generated = xp.random.uniform(low, hight, size, ).astype(dtype)
+    return generated
 
 def clip_img(x):
     return np.float32(-1 if x < -1 else (1 if x > 1 else x))
@@ -157,11 +165,11 @@ def train_dcgan_labeled(gen, dis, epoch0=0):
                 serializers.save_hdf5("%s/dcgan_model_gen_%d.h5" % (out_model_dir, epoch), gen)
                 serializers.save_hdf5("%s/dcgan_state_dis_%d.h5" % (out_model_dir, epoch), o_dis)
                 serializers.save_hdf5("%s/dcgan_state_gen_%d.h5" % (out_model_dir, epoch), o_gen)
-                
+
         print 'epoch end', epoch, sum_l_gen / n_train, sum_l_dis / n_train
 
 
-gen = Generator()
+gen = Generator(nz=nz)
 dis = Discriminator()
 
 if using_gpu:

@@ -23,17 +23,6 @@ import chainer.links as L
 
 import numpy
 
-# sizeは、1次元なら数字、多次元ならタプル
-def generate_rand(low, hight, size, dtype=np.float32):
-    global using_gpu
-    if using_gpu:
-        # この書き方だと、xp = cuda.cupy なら良いが、xp = np の場合にエラーになる
-        generated = xp.random.uniform(low, hight, size, dtype=dtype)
-    else:
-        generated = xp.random.uniform(low, hight, size, ).astype(dtype)
-    return generated
-
-
 class ELU(function.Function):
     """Exponential Linear Unit."""
 
@@ -84,7 +73,7 @@ def elu(x, alpha=1.0):
 
 
 class Generator(chainer.Chain):
-    def __init__(self):
+    def __init__(self, nz=30):
         super(Generator, self).__init__(
                 l0z=L.Linear(nz, 6 * 6 * 128, wscale=0.02 * math.sqrt(nz)),
                 dc1=L.Deconvolution2D(128, 64, 4, stride=2, pad=1, wscale=0.02 * math.sqrt(4 * 4 * 128)),
