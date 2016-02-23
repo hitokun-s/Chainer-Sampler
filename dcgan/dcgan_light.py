@@ -41,7 +41,7 @@ out_model_dir = './out_models'
 
 nz = 30  # # of dim for Z
 batchsize = 52
-n_epoch = 10000
+n_epoch = 100000
 n_train = 52
 image_save_interval = 51
 
