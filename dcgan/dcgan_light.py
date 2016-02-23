@@ -75,9 +75,8 @@ def binarize(ndArr, th=50):
             ndArr[i][j] = -1 if ndArr[i][j] > th else 1 # 白（背景）を-1に、黒を1にしている
     return ndArr
 
-def train_dcgan_labeled(gen, dis, epoch0=0):
-    o_gen = optimizers.Adam(alpha=0.0002, beta1=0.5)
-    o_dis = optimizers.Adam(alpha=0.0002, beta1=0.5)
+def train_dcgan_labeled(gen, dis, o_gen, o_dis, epoch0=0):
+
     o_gen.setup(gen)
     o_dis.setup(dis)
     o_gen.add_hook(chainer.optimizer.WeightDecay(0.00001))
@@ -143,7 +142,7 @@ def train_dcgan_labeled(gen, dis, epoch0=0):
             # print "backward done"
 
             # if i % image_save_interval == 0:
-            if epoch % 50 == 0:
+            if epoch % 200 == 0:
                 pylab.rcParams['figure.figsize'] = (16.0, 16.0)
                 pylab.clf()
                 vissize = 100
@@ -161,25 +160,33 @@ def train_dcgan_labeled(gen, dis, epoch0=0):
                     pylab.axis('off')
                 pylab.savefig('%s/vis_%d_%d.png' % (out_image_dir, epoch, i))
 
-                serializers.save_hdf5("%s/dcgan_model_dis_%d.h5" % (out_model_dir, epoch), dis)
-                serializers.save_hdf5("%s/dcgan_model_gen_%d.h5" % (out_model_dir, epoch), gen)
-                serializers.save_hdf5("%s/dcgan_state_dis_%d.h5" % (out_model_dir, epoch), o_dis)
-                serializers.save_hdf5("%s/dcgan_state_gen_%d.h5" % (out_model_dir, epoch), o_gen)
+                serializers.save_hdf5("%s/dcgan_model_dis.h5" % out_model_dir, dis)
+                serializers.save_hdf5("%s/dcgan_model_gen.h5" % out_model_dir, gen)
+                serializers.save_hdf5("%s/dcgan_state_dis.h5" % out_model_dir, o_dis)
+                serializers.save_hdf5("%s/dcgan_state_gen.h5" % out_model_dir, o_gen)
 
         print 'epoch end', epoch, sum_l_gen / n_train, sum_l_dis / n_train
 
-
 gen = Generator(nz=nz)
 dis = Discriminator()
+o_gen = optimizers.Adam(alpha=0.0002, beta1=0.5)
+o_dis = optimizers.Adam(alpha=0.0002, beta1=0.5)
 
 if using_gpu:
     gen.to_gpu()
     dis.to_gpu()
 
-try:
-    os.mkdir(out_image_dir)
-    os.mkdir(out_model_dir)
-except:
-    pass
+if os.path.exists("%s/dcgan_model_dis.h5" % out_model_dir):
+    print "Model files found!"
+    serializers.load_hdf5("%s/dcgan_model_dis.h5" % out_model_dir, dis)
+    serializers.load_hdf5("%s/dcgan_model_gen.h5" % out_model_dir, gen)
+    serializers.load_hdf5("%s/dcgan_state_dis.h5" % out_model_dir, o_dis)
+    serializers.load_hdf5("%s/dcgan_state_gen.h5" % out_model_dir, o_gen)
+else:
+    try:
+        os.mkdir(out_image_dir)
+        os.mkdir(out_model_dir)
+    except:
+        pass
 
-train_dcgan_labeled(gen, dis)
+train_dcgan_labeled(gen, dis, o_gen, o_dis)
