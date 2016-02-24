@@ -40,7 +40,7 @@ out_image_dir = './out_images'
 out_model_dir = './out_models'
 
 nz = 100  # # of dim for Z
-batchsize = 52
+z_sample_size = 1000
 n_epoch = 500000
 n_train = 52
 image_save_interval = 51
@@ -101,11 +101,11 @@ def train_dcgan_labeled(gen, dis, o_gen, o_dis, epoch0=0):
 
         # train generator
         # gen画像をdisに入力したときにdis出力＝０になるように学習させる
-        z = Variable(generate_rand(-1, 1, (batchsize, nz), dtype=np.float32))
+        z = Variable(generate_rand(-1, 1, (z_sample_size, nz), dtype=np.float32))
         x = gen(z)
         yl = dis(x)
-        L_gen = F.softmax_cross_entropy(yl, Variable(xp.zeros(batchsize, dtype=np.int32)))
-        L_dis = F.softmax_cross_entropy(yl, Variable(xp.ones(batchsize, dtype=np.int32)))
+        L_gen = F.softmax_cross_entropy(yl, Variable(xp.zeros(z_sample_size, dtype=np.int32)))
+        L_dis = F.softmax_cross_entropy(yl, Variable(xp.ones(z_sample_size, dtype=np.int32)))
 
         # train discriminator
         # サンプル画像を入力したときはdis出力＝０、gen画像を入力したときはdis出力＝１になるように学習させる
