@@ -151,7 +151,7 @@ def train_dcgan_labeled(gen, dis, o_gen, o_dis, epoch0=0):
             # print "backward done"
 
             # if i % image_save_interval == 0:
-            if epoch % 200 == 0:
+            if epoch % 5000 == 0:
                 pylab.rcParams['figure.figsize'] = (16.0, 16.0)
                 pylab.clf()
                 vissize = 100
