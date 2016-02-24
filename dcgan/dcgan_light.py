@@ -86,7 +86,7 @@ def train_dcgan_labeled(gen, dis, o_gen, o_dis, epoch0=0):
 
     # サンプル52にしたことだし、もう固定で作ってしまう
     # ----------------------------------------------------------------------------------
-    x2 = np.zeros((batchsize, 1, 48, 48), dtype=np.float32)
+    x2 = np.zeros((52, 1, 48, 48), dtype=np.float32)
     for j in range(52):
         res = np.asarray(Image.open(StringIO(dataset[j])).convert('L')).astype(np.float32)
         res.flags.writeable = True
@@ -99,81 +99,60 @@ def train_dcgan_labeled(gen, dis, o_gen, o_dis, epoch0=0):
         sum_l_dis = np.float32(0)
         sum_l_gen = np.float32(0)
 
-        for i in xrange(0, n_train, batchsize):
-            # discriminator
-            # 0: from dataset
-            # 1: from noise
+        # train generator
+        # gen画像をdisに入力したときにdis出力＝０になるように学習させる
+        z = Variable(generate_rand(-1, 1, (batchsize, nz), dtype=np.float32))
+        x = gen(z)
+        yl = dis(x)
+        L_gen = F.softmax_cross_entropy(yl, Variable(xp.zeros(batchsize, dtype=np.int32)))
+        L_dis = F.softmax_cross_entropy(yl, Variable(xp.ones(batchsize, dtype=np.int32)))
 
-            # print "load image start ", i
-            # x2 = np.zeros((batchsize, 1, 48, 48), dtype=np.float32)
-            # for j in range(batchsize):
-            #     try:
-            #         rnd = np.random.randint(len(dataset))
-            #         # rnd2 = np.random.randint(2)
-            #         # img = np.asarray(Image.open(StringIO(dataset[rnd])).convert('RGB')).astype(np.float32).transpose(2,0,1)
-            #         # 左右反転しているっぽい（和田）
-            #         # if rnd2 == 0:
-            #         #     x2[j, :, :, :] = (img[:, :, ::-1] - 128.0) / 128.0
-            #         # else:
-            #         #     x2[j, :, :, :] = (img[:, :, :] - 128.0) / 128.0
-            #         res = np.asarray(Image.open(StringIO(dataset[rnd])).convert('L')).astype(np.float32)
-            #         res.flags.writeable = True
-            #         x2[j, :, :, :] = binarize(res, 50)
-            #     except:
-            #         print 'read image error occured', fs[rnd]
+        # train discriminator
+        # サンプル画像を入力したときはdis出力＝０、gen画像を入力したときはdis出力＝１になるように学習させる
 
-            # train generator
-            z = Variable(generate_rand(-1, 1, (batchsize, nz), dtype=np.float32))
-            x = gen(z)
-            yl = dis(x)
-            L_gen = F.softmax_cross_entropy(yl, Variable(xp.zeros(batchsize, dtype=np.int32)))
-            L_dis = F.softmax_cross_entropy(yl, Variable(xp.ones(batchsize, dtype=np.int32)))
+        # x2 = Variable(cuda.to_gpu(x2) if using_gpu else x2)
+        yl2 = dis(x2) # サンプル画像を入力したときのdis出力
+        L_dis += F.softmax_cross_entropy(yl2, Variable(xp.zeros(52, dtype=np.int32)))
 
-            # train discriminator
+        # L_disには2種類の誤差が合計されるので、
+        # - サンプル画像を入力した出力は0に近くなるように、
+        # - gen画像を入力した出力は１に近くなるように、
+        # 学習されるはず。
 
-            # x2 = Variable(cuda.to_gpu(x2) if using_gpu else x2)
-            yl2 = dis(x2)
-            L_dis += F.softmax_cross_entropy(yl2, Variable(xp.zeros(batchsize, dtype=np.int32)))
+        o_gen.zero_grads()
+        L_gen.backward()
+        o_gen.update()
 
-            # print "forward done"
+        o_dis.zero_grads()
+        L_dis.backward()
+        o_dis.update()
 
-            o_gen.zero_grads()
-            L_gen.backward()
-            o_gen.update()
+        sum_l_gen += L_gen.data.get() # gen出力の誤差（交差エントロピー）を加算
+        sum_l_dis += L_dis.data.get() # dis出力の誤差（交差エントロピー）を加算
 
-            o_dis.zero_grads()
-            L_dis.backward()
-            o_dis.update()
+        if epoch % 5000 == 0:
+            pylab.rcParams['figure.figsize'] = (16.0, 16.0)
+            pylab.clf()
+            vissize = 100
+            z = zvis
+            z[50:, :] = (xp.random.uniform(-1, 1, (50, nz), dtype=np.float32))
+            z = Variable(z)
+            x = gen(z, test=True)
+            x = x.data.get()
+            for i_ in range(100):
+                # tmp = ((np.vectorize(clip_img)(x[i_, :, :, :]) + 1) / 2).transpose(1, 2, 0)
+                tmp = np.vectorize(clip_img)(x[i_, 0, :, :])
+                pylab.subplot(10, 10, i_ + 1)
+                pylab.gray()
+                pylab.imshow(tmp)
+                pylab.axis('off')
+            pylab.savefig('%s/vis_%d_%d.png' % (out_image_dir, epoch, 0))
+            serializers.save_hdf5("%s/dcgan_model_dis.h5" % out_model_dir, dis)
+            serializers.save_hdf5("%s/dcgan_model_gen.h5" % out_model_dir, gen)
+            serializers.save_hdf5("%s/dcgan_state_dis.h5" % out_model_dir, o_dis)
+            serializers.save_hdf5("%s/dcgan_state_gen.h5" % out_model_dir, o_gen)
 
-            sum_l_gen += L_gen.data.get()
-            sum_l_dis += L_dis.data.get()
-
-            # print "backward done"
-
-            # if i % image_save_interval == 0:
-            if epoch % 5000 == 0:
-                pylab.rcParams['figure.figsize'] = (16.0, 16.0)
-                pylab.clf()
-                vissize = 100
-                z = zvis
-                z[50:, :] = (xp.random.uniform(-1, 1, (50, nz), dtype=np.float32))
-                z = Variable(z)
-                x = gen(z, test=True)
-                x = x.data.get()
-                for i_ in range(100):
-                    # tmp = ((np.vectorize(clip_img)(x[i_, :, :, :]) + 1) / 2).transpose(1, 2, 0)
-                    tmp = np.vectorize(clip_img)(x[i_, 0, :, :])
-                    pylab.subplot(10, 10, i_ + 1)
-                    pylab.gray()
-                    pylab.imshow(tmp)
-                    pylab.axis('off')
-                pylab.savefig('%s/vis_%d_%d.png' % (out_image_dir, epoch, i))
-
-                serializers.save_hdf5("%s/dcgan_model_dis.h5" % out_model_dir, dis)
-                serializers.save_hdf5("%s/dcgan_model_gen.h5" % out_model_dir, gen)
-                serializers.save_hdf5("%s/dcgan_state_dis.h5" % out_model_dir, o_dis)
-                serializers.save_hdf5("%s/dcgan_state_gen.h5" % out_model_dir, o_gen)
-
+        # sum_l_dis:交差エントロピーの和
         print 'epoch end', epoch, sum_l_gen / n_train, sum_l_dis / n_train
 
 gen = Generator(nz=nz)
