@@ -40,7 +40,7 @@ out_image_dir = './out_images'
 out_model_dir = './out_models'
 
 nz = 100  # # of dim for Z
-z_sample_size = 1000
+z_sample_size = 500
 n_epoch = 500000
 n_train = 52
 image_save_interval = 51
@@ -130,7 +130,7 @@ def train_dcgan_labeled(gen, dis, o_gen, o_dis, epoch0=0):
         sum_l_gen += L_gen.data.get() # gen出力の誤差（交差エントロピー）を加算
         sum_l_dis += L_dis.data.get() # dis出力の誤差（交差エントロピー）を加算
 
-        if epoch % 5000 == 0:
+        if epoch % 500 == 0:
             pylab.rcParams['figure.figsize'] = (16.0, 16.0)
             pylab.clf()
             vissize = 100
