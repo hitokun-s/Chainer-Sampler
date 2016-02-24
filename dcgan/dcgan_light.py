@@ -62,7 +62,7 @@ def generate_rand(low, hight, size, dtype=np.float32):
         # この書き方だと、xp = cuda.cupy なら良いが、xp = np の場合にエラーになる
         generated = xp.random.uniform(low, hight, size, dtype=dtype)
     else:
-        generated = xp.random.uniform(low, hight, size, ).astype(dtype)
+        generated = xp.random.uniform(low, hight, size).astype(dtype)
     return generated
 
 def clip_img(x):
@@ -84,6 +84,16 @@ def train_dcgan_labeled(gen, dis, o_gen, o_dis, epoch0=0):
 
     zvis = (generate_rand(-1, 1, (100, nz), dtype=np.float32))
 
+    # サンプル52にしたことだし、もう固定で作ってしまう
+    # ----------------------------------------------------------------------------------
+    x2 = np.zeros((batchsize, 1, 48, 48), dtype=np.float32)
+    for j in range(52):
+        res = np.asarray(Image.open(StringIO(dataset[j])).convert('L')).astype(np.float32)
+        res.flags.writeable = True
+        x2[j, :, :, :] = binarize(res, 50)
+    x2 = Variable(cuda.to_gpu(x2) if using_gpu else x2)
+    # ----------------------------------------------------------------------------------
+
     for epoch in xrange(epoch0, n_epoch):
         perm = np.random.permutation(n_train)
         sum_l_dis = np.float32(0)
@@ -95,23 +105,22 @@ def train_dcgan_labeled(gen, dis, o_gen, o_dis, epoch0=0):
             # 1: from noise
 
             # print "load image start ", i
-            x2 = np.zeros((batchsize, 1, 48, 48), dtype=np.float32)
-            for j in range(batchsize):
-                try:
-                    rnd = np.random.randint(len(dataset))
-                    # rnd2 = np.random.randint(2)
-                    # img = np.asarray(Image.open(StringIO(dataset[rnd])).convert('RGB')).astype(np.float32).transpose(2,0,1)
-                    # 左右反転しているっぽい（和田）
-                    # if rnd2 == 0:
-                    #     x2[j, :, :, :] = (img[:, :, ::-1] - 128.0) / 128.0
-                    # else:
-                    #     x2[j, :, :, :] = (img[:, :, :] - 128.0) / 128.0
-                    res = np.asarray(Image.open(StringIO(dataset[rnd])).convert('L')).astype(np.float32)
-                    res.flags.writeable = True
-                    x2[j, :, :, :] = binarize(res, 50)
-                except:
-                    print 'read image error occured', fs[rnd]
-            # print "load image done"
+            # x2 = np.zeros((batchsize, 1, 48, 48), dtype=np.float32)
+            # for j in range(batchsize):
+            #     try:
+            #         rnd = np.random.randint(len(dataset))
+            #         # rnd2 = np.random.randint(2)
+            #         # img = np.asarray(Image.open(StringIO(dataset[rnd])).convert('RGB')).astype(np.float32).transpose(2,0,1)
+            #         # 左右反転しているっぽい（和田）
+            #         # if rnd2 == 0:
+            #         #     x2[j, :, :, :] = (img[:, :, ::-1] - 128.0) / 128.0
+            #         # else:
+            #         #     x2[j, :, :, :] = (img[:, :, :] - 128.0) / 128.0
+            #         res = np.asarray(Image.open(StringIO(dataset[rnd])).convert('L')).astype(np.float32)
+            #         res.flags.writeable = True
+            #         x2[j, :, :, :] = binarize(res, 50)
+            #     except:
+            #         print 'read image error occured', fs[rnd]
 
             # train generator
             z = Variable(generate_rand(-1, 1, (batchsize, nz), dtype=np.float32))
@@ -122,7 +131,7 @@ def train_dcgan_labeled(gen, dis, o_gen, o_dis, epoch0=0):
 
             # train discriminator
 
-            x2 = Variable(cuda.to_gpu(x2) if using_gpu else x2)
+            # x2 = Variable(cuda.to_gpu(x2) if using_gpu else x2)
             yl2 = dis(x2)
             L_dis += F.softmax_cross_entropy(yl2, Variable(xp.zeros(batchsize, dtype=np.int32)))
 

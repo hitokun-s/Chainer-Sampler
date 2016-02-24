@@ -82,3 +82,22 @@ print arr10[1,:,1] # => [3,4,5]
 print arr10[:,:,::-1] # 最小単位内で逆順になる
 arr10[0,0,:] = [9,9,9]
 print arr10
+
+
+randomized = (np.random.uniform(-1, 1, (4,2)).astype(np.float32))
+print randomized
+# 行インデックス≧２のデータ（つまり３，４行目）を置換する
+randomized[2:, :] = (np.random.uniform(-1, 1, (2,2)).astype(np.float32))
+print randomized
+
+nz = 30
+z = (np.random.uniform(-1, 1, (100,nz)).astype(np.float32))
+z[50:, :] = (np.random.uniform(-1, 1, (50, nz)).astype(np.float32))
+
+print z.shape
+print "The end!"
+
+# 所定範囲内からランダムに選んだ数を返す
+print np.random.randint(10)
+print np.random.randint(10)
+print np.random.randint(10)
