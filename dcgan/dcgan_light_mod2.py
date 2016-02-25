@@ -98,7 +98,7 @@ def train_dcgan_labeled(gen, dis, o_gen, o_dis, epoch0=0):
         sum_l_dis = np.float32(0)
         sum_l_gen = np.float32(0)
 
-        for j in range(30):
+        for j in range(50):
             sample = np.zeros((t_sample_size, 1, 48, 48), dtype=np.float32)
 
             perm = np.random.permutation(52)
@@ -138,7 +138,7 @@ def train_dcgan_labeled(gen, dis, o_gen, o_dis, epoch0=0):
             sum_l_gen += L_gen.data.get() # gen出力の誤差（交差エントロピー）を加算
             sum_l_dis += L_dis.data.get() # dis出力の誤差（交差エントロピー）を加算
 
-        if epoch % 10 == 0:
+        if epoch % 20 == 0:
             pylab.rcParams['figure.figsize'] = (16.0, 16.0)
             pylab.clf()
             z = zvis
