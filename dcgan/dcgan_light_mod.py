@@ -40,10 +40,9 @@ out_image_dir = './out_images_mod'
 out_model_dir = './out_models_mod'
 
 nz = 100  # # of dim for Z
-z_sample_size = 25
+z_sample_size = 10
+t_sample_size = 10
 n_epoch = 500000
-n_train = 52
-image_save_interval = 51
 
 fs = os.listdir(image_dir)
 print len(fs)
@@ -95,16 +94,16 @@ def train_dcgan_labeled(gen, dis, o_gen, o_dis, epoch0=0):
     # ----------------------------------------------------------------------------------
 
     for epoch in xrange(epoch0, n_epoch):
-        # perm = np.random.permutation(n_train)
+
         sum_l_dis = np.float32(0)
         sum_l_gen = np.float32(0)
 
         for j in range(5):
-            sample = np.zeros((25, 1, 48, 48), dtype=np.float32)
+            sample = np.zeros((t_sample_size, 1, 48, 48), dtype=np.float32)
 
             perm = np.random.permutation(52)
-            selected = x2[perm[:25]] # サンプルからランダムに25個取り出す
-            for k in range(25):
+            selected = x2[perm[:t_sample_size]] # サンプルからランダムにt_sample_size個取り出す
+            for k in range(t_sample_size):
                 sample[k, :, :, :] = selected[k]
             sample = Variable(cuda.to_gpu(sample) if using_gpu else sample)
 
@@ -121,7 +120,7 @@ def train_dcgan_labeled(gen, dis, o_gen, o_dis, epoch0=0):
 
             # x2 = Variable(cuda.to_gpu(x2) if using_gpu else x2)
             yl2 = dis(sample) # サンプル画像を入力したときのdis出力
-            L_dis += F.softmax_cross_entropy(yl2, Variable(xp.zeros(25, dtype=np.int32)))
+            L_dis += F.softmax_cross_entropy(yl2, Variable(xp.zeros(t_sample_size, dtype=np.int32)))
 
             # L_disには2種類の誤差が合計されるので、
             # - サンプル画像を入力した出力は0に近くなるように、
@@ -161,7 +160,7 @@ def train_dcgan_labeled(gen, dis, o_gen, o_dis, epoch0=0):
             serializers.save_hdf5("%s/dcgan_state_gen.h5" % out_model_dir, o_gen)
 
         # sum_l_dis:交差エントロピーの和
-        print 'epoch end', epoch, sum_l_gen / n_train, sum_l_dis / n_train
+        print 'epoch end', epoch, sum_l_gen, sum_l_dis
 
 gen = Generator(nz=nz)
 dis = Discriminator()

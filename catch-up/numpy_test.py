@@ -48,7 +48,8 @@ assert np.array_equal(arr4[:2], np.array([
 arr5 = np.array([1,2,3,4,5])
 perm = np.random.permutation(5)
 print perm # ランダムに並べたインデックス
-print arr5[perm] # ランダムに並べた値
+print arr5[perm] # ランダムに並びかえたもの
+print arr5[perm[:2]] # ランダムに３つ取り出したもの
 
 arr6 = np.array([
     [1,2,3],
@@ -101,3 +102,11 @@ print "The end!"
 print np.random.randint(10)
 print np.random.randint(10)
 print np.random.randint(10)
+
+x2 = np.zeros((10, 1, 2, 2), dtype=np.float32)
+for i in range(10):
+    x2[i,0,:,:] = np.array([[i,i],[i,i]])
+
+perm = np.random.permutation(10)
+selected = x2[perm[:5]]
+print selected
