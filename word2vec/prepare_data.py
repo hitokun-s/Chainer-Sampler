@@ -36,7 +36,7 @@ def process(sentences):
         result.append(new_review)
     return result
 
-curr_dir = os.path.dirname(__file__)
+curr_dir = os.getcwd()
 
 def doExec():
     index2word = {} # 順引辞書
