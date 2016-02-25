@@ -40,7 +40,7 @@ out_image_dir = './out_images_mod2'
 out_model_dir = './out_models_mod2'
 
 nz = 100  # # of dim for Z
-z_sample_size = 52
+z_sample_size = 100
 t_sample_size = 52
 n_epoch = 500000
 
