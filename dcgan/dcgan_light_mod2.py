@@ -40,8 +40,8 @@ out_image_dir = './out_images_mod2'
 out_model_dir = './out_models_mod2'
 
 nz = 100  # # of dim for Z
-z_sample_size = 10
-t_sample_size = 10
+z_sample_size = 52
+t_sample_size = 52
 n_epoch = 500000
 
 fs = os.listdir(image_dir)
@@ -90,7 +90,7 @@ def train_dcgan_labeled(gen, dis, o_gen, o_dis, epoch0=0):
         res = np.asarray(Image.open(StringIO(dataset[j])).convert('L')).astype(np.float32)
         res.flags.writeable = True
         x2[j, :, :, :] = binarize(res, 50)
-    # x2 = Variable(cuda.to_gpu(x2) if using_gpu else x2)
+    x2 = Variable(cuda.to_gpu(x2) if using_gpu else x2)
     # ----------------------------------------------------------------------------------
 
     for epoch in xrange(epoch0, n_epoch):
@@ -101,11 +101,12 @@ def train_dcgan_labeled(gen, dis, o_gen, o_dis, epoch0=0):
         for j in range(50):
             sample = np.zeros((t_sample_size, 1, 48, 48), dtype=np.float32)
 
-            perm = np.random.permutation(52)
-            selected = x2[perm[:t_sample_size]] # サンプルからランダムにt_sample_size個取り出す
-            for k in range(t_sample_size):
-                sample[k, :, :, :] = selected[k]
-            sample = Variable(cuda.to_gpu(sample) if using_gpu else sample)
+            # perm = np.random.permutation(52)
+            # selected = x2[perm[:t_sample_size]] # サンプルからランダムにt_sample_size個取り出す
+            # for k in range(t_sample_size):
+            #     sample[k, :, :, :] = selected[k]
+            # sample = Variable(cuda.to_gpu(sample) if using_gpu else sample)
+            sample = x2
 
             # train generator
             # gen画像をdisに入力したときにdis出力＝０になるように学習させる
