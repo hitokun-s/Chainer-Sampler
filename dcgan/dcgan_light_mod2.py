@@ -98,7 +98,7 @@ def train_dcgan_labeled(gen, dis, o_gen, o_dis, epoch0=0):
         sum_l_dis = np.float32(0)
         sum_l_gen = np.float32(0)
 
-        for j in range(5):
+        for j in range(30):
             sample = np.zeros((t_sample_size, 1, 48, 48), dtype=np.float32)
 
             perm = np.random.permutation(52)
