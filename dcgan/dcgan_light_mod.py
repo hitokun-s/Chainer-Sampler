@@ -103,7 +103,7 @@ def train_dcgan_labeled(gen, dis, o_gen, o_dis, epoch0=0):
             sample = np.zeros((25, 1, 48, 48), dtype=np.float32)
 
             perm = np.random.permutation(52)
-            selected = x2[perm[:24]] # サンプルからランダムに25個取り出す
+            selected = x2[perm[:25]] # サンプルからランダムに25個取り出す
             for k in range(25):
                 sample[k, :, :, :] = selected[k]
             sample = Variable(cuda.to_gpu(sample) if using_gpu else sample)
