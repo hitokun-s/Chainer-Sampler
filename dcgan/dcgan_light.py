@@ -127,7 +127,7 @@ def train_dcgan_labeled(gen, dis, o_gen, o_dis, epoch0=0):
             o_gen.zero_grads()
             L_gen.backward()
             o_gen.update()
-
+    
             o_dis.zero_grads()
             L_dis.backward()
             o_dis.update()
