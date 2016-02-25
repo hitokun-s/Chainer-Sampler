@@ -91,49 +91,53 @@ def train_dcgan_labeled(gen, dis, o_gen, o_dis, epoch0=0):
         res = np.asarray(Image.open(StringIO(dataset[j])).convert('L')).astype(np.float32)
         res.flags.writeable = True
         x2[j, :, :, :] = binarize(res, 50)
-    x2 = Variable(cuda.to_gpu(x2) if using_gpu else x2)
+    # x2 = Variable(cuda.to_gpu(x2) if using_gpu else x2)
     # ----------------------------------------------------------------------------------
 
     for epoch in xrange(epoch0, n_epoch):
-        perm = np.random.permutation(n_train)
+        # perm = np.random.permutation(n_train)
         sum_l_dis = np.float32(0)
         sum_l_gen = np.float32(0)
 
-        # train generator
-        # gen画像をdisに入力したときにdis出力＝０になるように学習させる
-        z = Variable(generate_rand(-1, 1, (z_sample_size, nz), dtype=np.float32))
-        x = gen(z)
-        yl = dis(x)
-        L_gen = F.softmax_cross_entropy(yl, Variable(xp.zeros(z_sample_size, dtype=np.int32)))
-        L_dis = F.softmax_cross_entropy(yl, Variable(xp.ones(z_sample_size, dtype=np.int32)))
+        for j in range(52):
+            sample = np.zeros((1, 1, 48, 48), dtype=np.float32)
+            sample[0, :, :, :] = x2[j]
+            sample = Variable(cuda.to_gpu(sample) if using_gpu else sample)
 
-        # train discriminator
-        # サンプル画像を入力したときはdis出力＝０、gen画像を入力したときはdis出力＝１になるように学習させる
+            # train generator
+            # gen画像をdisに入力したときにdis出力＝０になるように学習させる
+            z = Variable(generate_rand(-1, 1, (z_sample_size, nz), dtype=np.float32))
+            x = gen(z)
+            yl = dis(x)
+            L_gen = F.softmax_cross_entropy(yl, Variable(xp.zeros(z_sample_size, dtype=np.int32)))
+            L_dis = F.softmax_cross_entropy(yl, Variable(xp.ones(z_sample_size, dtype=np.int32)))
 
-        # x2 = Variable(cuda.to_gpu(x2) if using_gpu else x2)
-        yl2 = dis(x2) # サンプル画像を入力したときのdis出力
-        L_dis += F.softmax_cross_entropy(yl2, Variable(xp.zeros(52, dtype=np.int32)))
+            # train discriminator
+            # サンプル画像を入力したときはdis出力＝０、gen画像を入力したときはdis出力＝１になるように学習させる
 
-        # L_disには2種類の誤差が合計されるので、
-        # - サンプル画像を入力した出力は0に近くなるように、
-        # - gen画像を入力した出力は１に近くなるように、
-        # 学習されるはず。
+            # x2 = Variable(cuda.to_gpu(x2) if using_gpu else x2)
+            yl2 = dis(sample) # サンプル画像を入力したときのdis出力
+            L_dis += F.softmax_cross_entropy(yl2, Variable(xp.zeros(1, dtype=np.int32)))
 
-        o_gen.zero_grads()
-        L_gen.backward()
-        o_gen.update()
+            # L_disには2種類の誤差が合計されるので、
+            # - サンプル画像を入力した出力は0に近くなるように、
+            # - gen画像を入力した出力は１に近くなるように、
+            # 学習されるはず。
 
-        o_dis.zero_grads()
-        L_dis.backward()
-        o_dis.update()
+            o_gen.zero_grads()
+            L_gen.backward()
+            o_gen.update()
 
-        sum_l_gen += L_gen.data.get() # gen出力の誤差（交差エントロピー）を加算
-        sum_l_dis += L_dis.data.get() # dis出力の誤差（交差エントロピー）を加算
+            o_dis.zero_grads()
+            L_dis.backward()
+            o_dis.update()
+
+            sum_l_gen += L_gen.data.get() # gen出力の誤差（交差エントロピー）を加算
+            sum_l_dis += L_dis.data.get() # dis出力の誤差（交差エントロピー）を加算
 
         if epoch % 500 == 0:
             pylab.rcParams['figure.figsize'] = (16.0, 16.0)
             pylab.clf()
-            vissize = 100
             z = zvis
             z[50:, :] = (xp.random.uniform(-1, 1, (50, nz), dtype=np.float32))
             z = Variable(z)
