@@ -36,11 +36,11 @@ except:
     print  "I'm sorry. Using CPU."
 
 image_dir = './images48'
-out_image_dir = './out_images'
-out_model_dir = './out_models'
+out_image_dir = './out_images_mod'
+out_model_dir = './out_models_mod'
 
 nz = 100  # # of dim for Z
-z_sample_size = 500
+z_sample_size = 25
 n_epoch = 500000
 n_train = 52
 image_save_interval = 51
@@ -99,9 +99,13 @@ def train_dcgan_labeled(gen, dis, o_gen, o_dis, epoch0=0):
         sum_l_dis = np.float32(0)
         sum_l_gen = np.float32(0)
 
-        for j in range(52):
-            sample = np.zeros((1, 1, 48, 48), dtype=np.float32)
-            sample[0, :, :, :] = x2[j]
+        for j in range(5):
+            sample = np.zeros((25, 1, 48, 48), dtype=np.float32)
+
+            perm = np.random.permutation(52)
+            selected = x2[perm[:24]] # サンプルからランダムに25個取り出す
+            for k in range(25):
+                sample[k, :, :, :] = selected[k]
             sample = Variable(cuda.to_gpu(sample) if using_gpu else sample)
 
             # train generator
