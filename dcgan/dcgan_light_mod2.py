@@ -41,7 +41,7 @@ out_model_dir = './out_models_mod2'
 
 nz = 100  # # of dim for Z
 z_sample_size = 1
-t_sample_size = 1
+t_sample_size = 52
 n_epoch = 500000
 
 fs = os.listdir(image_dir)
@@ -135,7 +135,7 @@ def train_dcgan_labeled(gen, dis, o_gen, o_dis, epoch0=0):
             L_dis.backward()
             o_dis.update()
 
-            sum_l_gen += L_gen.data.get() # gen出力の誤差（交差エントロピー）を加算
+            sum_l_gen += L_gen.data.get() # gen-dis出力の誤差（交差エントロピー）を加算
             sum_l_dis += L_dis.data.get() # dis出力の誤差（交差エントロピー）を加算
 
         if epoch % 20 == 0:
@@ -159,7 +159,7 @@ def train_dcgan_labeled(gen, dis, o_gen, o_dis, epoch0=0):
             serializers.save_hdf5("%s/dcgan_state_dis.h5" % out_model_dir, o_dis)
             serializers.save_hdf5("%s/dcgan_state_gen.h5" % out_model_dir, o_gen)
 
-        # sum_l_dis:交差エントロピーの和
+        # gen-disの交差エントロピーの和（＝最終出力がどれだけ０に近いか）、disの交差エントロピーの和
         print 'epoch end', epoch, sum_l_gen, sum_l_dis
 
 gen = Generator(nz=nz)
