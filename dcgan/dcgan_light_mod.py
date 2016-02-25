@@ -121,7 +121,7 @@ def train_dcgan_labeled(gen, dis, o_gen, o_dis, epoch0=0):
 
             # x2 = Variable(cuda.to_gpu(x2) if using_gpu else x2)
             yl2 = dis(sample) # サンプル画像を入力したときのdis出力
-            L_dis += F.softmax_cross_entropy(yl2, Variable(xp.zeros(1, dtype=np.int32)))
+            L_dis += F.softmax_cross_entropy(yl2, Variable(xp.zeros(25, dtype=np.int32)))
 
             # L_disには2種類の誤差が合計されるので、
             # - サンプル画像を入力した出力は0に近くなるように、
