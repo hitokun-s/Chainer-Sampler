@@ -90,7 +90,7 @@ def train_dcgan_labeled(gen, dis, o_gen, o_dis, epoch0=0):
         res = np.asarray(Image.open(StringIO(dataset[j])).convert('L')).astype(np.float32)
         res.flags.writeable = True
         x2[j, :, :, :] = binarize(res, 50)
-    x2 = Variable(cuda.to_gpu(x2) if using_gpu else x2)
+    # x2 = Variable(cuda.to_gpu(x2) if using_gpu else x2)
     # ----------------------------------------------------------------------------------
 
     turn_flg = True
