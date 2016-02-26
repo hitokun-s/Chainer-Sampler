@@ -165,8 +165,10 @@ def train_dcgan_labeled(gen, dis, o_gen, o_dis, epoch0=0):
 
 gen = Generator(nz=nz)
 dis = Discriminator()
-o_gen = optimizers.Adam(alpha=0.0002, beta1=0.5)
-o_dis = optimizers.Adam(alpha=0.0002, beta1=0.5)
+# o_gen = optimizers.Adam(alpha=0.0002, beta1=0.5)
+# o_dis = optimizers.Adam(alpha=0.0002, beta1=0.5)
+o_gen = optimizers.Adam(alpha=0.0001, beta1=0.5)
+o_dis = optimizers.Adam(alpha=0.0001, beta1=0.5)
 o_gen.setup(gen)
 o_dis.setup(dis)
 o_gen.add_hook(chainer.optimizer.WeightDecay(0.00001))
