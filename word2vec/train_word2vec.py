@@ -188,7 +188,7 @@ elif args.model == 'cbow':
 else:
     raise Exception('Unknown model type: {}'.format(args.model))
 
-if args.gpu >= 0:
+if using_gpu == True:
     model.to_gpu()
 
 dataset = np.array(dataset, dtype=np.int32)
