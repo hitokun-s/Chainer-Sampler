@@ -40,8 +40,8 @@ out_image_dir = './out_images_mod2'
 out_model_dir = './out_models_mod2'
 
 nz = 100  # # of dim for Z
-z_sample_size = 1000
-t_sample_size = 100
+z_sample_size = 100
+t_sample_size = 1000
 n_epoch = 500000
 
 fs = os.listdir(image_dir)
