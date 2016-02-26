@@ -128,13 +128,14 @@ def train_dcgan_labeled(gen, dis, o_gen, o_dis, epoch0=0):
             # - gen画像を入力した出力は１に近くなるように、
             # 学習されるはず。
 
-            o_gen.zero_grads()
-            L_gen.backward()
-            o_gen.update()
 
             o_dis.zero_grads()
             L_dis.backward()
             o_dis.update()
+
+            o_gen.zero_grads()
+            L_gen.backward()
+            o_gen.update()
 
             sum_l_gen += L_gen.data.get() # gen-dis出力の誤差（交差エントロピー）を加算
             sum_l_dis += L_dis.data.get() # dis出力の誤差（交差エントロピー）を加算
@@ -161,6 +162,9 @@ def train_dcgan_labeled(gen, dis, o_gen, o_dis, epoch0=0):
             serializers.save_hdf5("%s/dcgan_state_gen.h5" % out_model_dir, o_gen)
 
         # gen-disの交差エントロピーの和（＝最終出力がどれだけ０に近いか）、disの交差エントロピーの和
+        # 実験して観察すると、「sum_l_genがどんどん増大、sum_l_disがどんどん減少」というのが一定時間続いてから、
+        # 「sum_l_genが突然がくんと減少、sum_l_disががくんと増大」というリバウンドが起こる、というパターンを繰り返す
+        # その波というか両者の差がどんどん激しくなり、崩壊に向かっているような気がする
         print 'epoch end', epoch, sum_l_gen, sum_l_dis
 
 gen = Generator(nz=nz)
