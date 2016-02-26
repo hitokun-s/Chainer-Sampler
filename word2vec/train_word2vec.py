@@ -38,11 +38,20 @@ parser.add_argument('--out-type', '-o', choices=['hsm', 'ns', 'original'],
                     help='output model type ("hsm": hierarchical softmax, '
                     '"ns": negative sampling, "original": no approximation)')
 args = parser.parse_args()
-if args.gpu >= 0:
-    cuda.check_cuda_available()
-xp = cuda.cupy if args.gpu >= 0 else np
+# if args.gpu >= 0:
+#     cuda.check_cuda_available()
 
-print('GPU: {}'.format(args.gpu))
+using_gpu = False
+xp = np
+try:
+    cuda.check_cuda_available()
+    xp = cuda.cupy
+    cuda.get_device(0).use()
+    using_gpu = True
+except:
+    pass
+
+print('using GPU: %s' % using_gpu)
 print('# unit: {}'.format(args.unit))
 print('Window: {}'.format(args.window))
 print('Minibatch-size: {}'.format(args.batchsize))
