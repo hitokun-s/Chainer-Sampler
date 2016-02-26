@@ -72,8 +72,6 @@ class ContinuousBoW(chainer.Chain):
     def __call__(self, x, context):
         h = None
         for c in context:
-            c1,c2 = c
-            print c2.__class__
             e = self.embed(c)
             h = h + e if h is not None else e
 
@@ -91,7 +89,6 @@ class SkipGram(chainer.Chain):
     def __call__(self, x, context):
         loss = None
         for c in context:
-            print c.__class__
             e = self.embed(c)
             loss_i = self.loss_func(e, x)
             loss = loss_i if loss is None else loss + loss_i
