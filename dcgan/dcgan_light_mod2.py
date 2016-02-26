@@ -40,8 +40,8 @@ out_image_dir = './out_images_mod2'
 out_model_dir = './out_models_mod2'
 
 nz = 100  # # of dim for Z
-z_sample_size = 52
-t_sample_size = 52
+z_sample_size = 520
+t_sample_size = 520
 n_epoch = 500000
 
 fs = os.listdir(image_dir)
@@ -103,12 +103,12 @@ def train_dcgan_labeled(gen, dis, o_gen, o_dis, epoch0=0):
         for j in range(50):
             sample = np.zeros((t_sample_size, 1, 48, 48), dtype=np.float32)
 
-            # perm = np.random.permutation(52)
+            perm = np.random.permutation(52)
             # selected = x2[perm[:t_sample_size]] # サンプルからランダムにt_sample_size個取り出す
-            # for k in range(t_sample_size):
-            #     sample[k, :, :, :] = selected[k]
-            # sample = Variable(cuda.to_gpu(sample) if using_gpu else sample)
-            sample = x2
+            for k in range(t_sample_size):
+                sample[k, :, :, :] = x2[k % 52]
+            sample = Variable(cuda.to_gpu(sample) if using_gpu else sample)
+            # sample = x2
 
             # train generator
             # gen画像をdisに入力したときにdis出力＝０になるように学習させる
