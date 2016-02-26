@@ -192,8 +192,8 @@ o_gen = optimizers.Adam(alpha=0.001, beta1=0.5)
 o_dis = optimizers.Adam(alpha=0.001, beta1=0.5)
 o_gen.setup(gen)
 o_dis.setup(dis)
-o_gen.add_hook(chainer.optimizer.WeightDecay(0.00001))
-o_dis.add_hook(chainer.optimizer.WeightDecay(0.00001))
+o_gen.add_hook(chainer.optimizer.WeightDecay(0.0001))
+o_dis.add_hook(chainer.optimizer.WeightDecay(0.0001))
 
 if using_gpu:
     gen.to_gpu()
