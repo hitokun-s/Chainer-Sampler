@@ -115,7 +115,7 @@ def train_dcgan_labeled(gen, dis, o_gen, o_dis, epoch0=0):
             z = Variable(generate_rand(-1, 1, (z_sample_size, nz), dtype=np.float32))
             x = gen(z)
             yl = dis(x)
-            L_gen = F.softmax_cross_entropy(yl, Variable(xp.zeros(z_sample_size, dtype=np.int32)))
+            # L_gen = F.softmax_cross_entropy(yl, Variable(xp.zeros(z_sample_size, dtype=np.int32)))
             # L_dis = F.softmax_cross_entropy(yl, Variable(xp.ones(z_sample_size, dtype=np.int32)))
 
             # train discriminator
@@ -131,9 +131,11 @@ def train_dcgan_labeled(gen, dis, o_gen, o_dis, epoch0=0):
             # 学習されるはず。
 
             if turn_flg == True:
+                L_gen = F.softmax_cross_entropy(yl, Variable(xp.zeros(z_sample_size, dtype=np.int32)))
                 o_gen.zero_grads()
                 L_gen.backward()
                 o_gen.update()
+                sum_l_gen += L_gen.data.get() # gen-dis出力の誤差（交差エントロピー）を加算
                 turn_flg = False
             else:
                 L_dis = F.softmax_cross_entropy(yl, Variable(xp.ones(z_sample_size, dtype=np.int32)))
@@ -141,10 +143,11 @@ def train_dcgan_labeled(gen, dis, o_gen, o_dis, epoch0=0):
                 o_dis.zero_grads()
                 L_dis.backward()
                 o_dis.update()
+                sum_l_dis += L_dis.data.get() # dis出力の誤差（交差エントロピー）を加算
                 turn_flg = True
 
-            sum_l_gen += L_gen.data.get() # gen-dis出力の誤差（交差エントロピー）を加算
-            sum_l_dis += L_dis.data.get() # dis出力の誤差（交差エントロピー）を加算
+            # sum_l_gen += L_gen.data.get() # gen-dis出力の誤差（交差エントロピー）を加算
+            # sum_l_dis += L_dis.data.get() # dis出力の誤差（交差エントロピー）を加算
 
         if epoch % 20 == 0:
             pylab.rcParams['figure.figsize'] = (16.0, 16.0)
