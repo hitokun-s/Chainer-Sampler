@@ -91,13 +91,12 @@ class SkipGram(chainer.Chain):
     def __call__(self, x, context):
         loss = None
         for c in context:
+            c1,c2 = c
+            print c2.__class__
             e = self.embed(c)
-
             loss_i = self.loss_func(e, x)
             loss = loss_i if loss is None else loss + loss_i
-
         return loss
-
 
 class SoftmaxCrossEntropyLoss(chainer.Chain):
     def __init__(self, n_in, n_out):
