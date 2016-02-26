@@ -72,6 +72,8 @@ class ContinuousBoW(chainer.Chain):
     def __call__(self, x, context):
         h = None
         for c in context:
+            c1,c2 = c
+            print c2.__class__
             e = self.embed(c)
             h = h + e if h is not None else e
 
