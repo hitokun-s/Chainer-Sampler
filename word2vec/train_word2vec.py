@@ -17,6 +17,7 @@ from chainer import cuda
 import chainer.functions as F
 import chainer.links as L
 import chainer.optimizers as O
+import pickle
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--gpu', '-g', default=-1, type=int,
@@ -141,8 +142,12 @@ dataset = []
 # data = pickle.load(f)
 # f.close()
 
-from prepare_data import *
-data = doExec()
+# from prepare_data import *
+# data = doExec()
+
+f = open("data/pickle.dump", "r")
+data = pickle.load(f)
+f.close()
 
 word2index = data["word2index"]
 index2word = data["index2word"]

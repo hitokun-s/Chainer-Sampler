@@ -84,14 +84,19 @@ def doExec():
                     pass
                     # print "utf-8 encode error!"
                     # print line
-
+        # 一旦できたところまで保存
+        data = {
+            "index2word":index2word,
+            "word2index":word2index,
+            "dataset":dataset,
+            "counts":counts
+        }
+        f = open(curr_dir + "/data/pickle.dump", "w")
+        pickle.dump(data, f)
+        f.close()
 
     print len(dataset)
     print len(index2word)
-
-    # with open('data/ptb.train.txt') as f:
-    #     for line in f:
-    #         process_line(line)\
 
     # ファイルに保存
     data = {
@@ -106,11 +111,10 @@ if __name__ == '__main__':
     f = open(curr_dir + "/data/pickle.dump", "w")
     data = doExec()
     print "go!"
-    print len(data["word2index"])
+
     # 何も工夫をしないと、englishText_0_10000ファイルだけで17万語彙になってしまったが、その多くは、数字とか固有名詞というゴミデータだった
     # そこで、lemmatizeを行うとともに、wordnetに見出し語が存在しない語を捨てたら、語彙数は48000になった。
+    # 全ファイルについて処理した結果、語彙数は15万程度になった。
+    print len(data["word2index"])
     pickle.dump(data, f)
     f.close()
-
-    for w in data["word2index"]:
-        print w
