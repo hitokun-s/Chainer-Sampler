@@ -144,6 +144,14 @@ def train_dcgan_labeled(gen, dis, o_gen, o_dis, epoch0=0):
                 L_dis.backward()
                 o_dis.update()
                 sum_l_dis += L_dis.data.get() # dis出力の誤差（交差エントロピー）を加算
+
+                L_gen = F.softmax_cross_entropy(yl, Variable(xp.zeros(z_sample_size, dtype=np.int32)))
+                o_gen.zero_grads()
+                L_gen.backward()
+                o_gen.update()
+
+                sum_l_gen += L_gen.data.get() # gen-dis出力の誤差（交差エントロピー）を加算
+
                 turn_flg = True
 
             # sum_l_gen += L_gen.data.get() # gen-dis出力の誤差（交差エントロピー）を加算
