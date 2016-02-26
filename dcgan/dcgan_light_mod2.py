@@ -116,14 +116,14 @@ def train_dcgan_labeled(gen, dis, o_gen, o_dis, epoch0=0):
             x = gen(z)
             yl = dis(x)
             L_gen = F.softmax_cross_entropy(yl, Variable(xp.zeros(z_sample_size, dtype=np.int32)))
-            L_dis = F.softmax_cross_entropy(yl, Variable(xp.ones(z_sample_size, dtype=np.int32)))
+            # L_dis = F.softmax_cross_entropy(yl, Variable(xp.ones(z_sample_size, dtype=np.int32)))
 
             # train discriminator
             # サンプル画像を入力したときはdis出力＝０、gen画像を入力したときはdis出力＝１になるように学習させる
 
             # x2 = Variable(cuda.to_gpu(x2) if using_gpu else x2)
-            yl2 = dis(sample) # サンプル画像を入力したときのdis出力
-            L_dis += F.softmax_cross_entropy(yl2, Variable(xp.zeros(t_sample_size, dtype=np.int32)))
+            # yl2 = dis(sample) # サンプル画像を入力したときのdis出力
+            # L_dis += F.softmax_cross_entropy(yl2, Variable(xp.zeros(t_sample_size, dtype=np.int32)))
 
             # L_disには2種類の誤差が合計されるので、
             # - サンプル画像を入力した出力は0に近くなるように、
@@ -136,6 +136,8 @@ def train_dcgan_labeled(gen, dis, o_gen, o_dis, epoch0=0):
                 o_gen.update()
                 turn_flg = False
             else:
+                L_dis = F.softmax_cross_entropy(yl, Variable(xp.ones(z_sample_size, dtype=np.int32)))
+                L_dis += F.softmax_cross_entropy(dis(sample), Variable(xp.zeros(t_sample_size, dtype=np.int32)))
                 o_dis.zero_grads()
                 L_dis.backward()
                 o_dis.update()
