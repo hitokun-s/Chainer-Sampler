@@ -93,6 +93,8 @@ def train_dcgan_labeled(gen, dis, o_gen, o_dis, epoch0=0):
     x2 = Variable(cuda.to_gpu(x2) if using_gpu else x2)
     # ----------------------------------------------------------------------------------
 
+    turn_flg = True
+
     for epoch in xrange(epoch0, n_epoch):
 
         sum_l_dis = np.float32(0)
@@ -128,14 +130,16 @@ def train_dcgan_labeled(gen, dis, o_gen, o_dis, epoch0=0):
             # - gen画像を入力した出力は１に近くなるように、
             # 学習されるはず。
 
-
-            o_dis.zero_grads()
-            L_dis.backward()
-            o_dis.update()
-
-            o_gen.zero_grads()
-            L_gen.backward()
-            o_gen.update()
+            if turn_flg == True:
+                o_gen.zero_grads()
+                L_gen.backward()
+                o_gen.update()
+                turn_flg = False
+            else:
+                o_dis.zero_grads()
+                L_dis.backward()
+                o_dis.update()
+                turn_flg = True
 
             sum_l_gen += L_gen.data.get() # gen-dis出力の誤差（交差エントロピー）を加算
             sum_l_dis += L_dis.data.get() # dis出力の誤差（交差エントロピー）を加算
