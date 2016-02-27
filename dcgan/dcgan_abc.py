@@ -35,7 +35,7 @@ try:
 except:
     print  "I'm sorry. Using CPU."
 
-image_dir = './images_abc'
+image_dir = './images48'
 out_image_dir = './out_images_abc'
 out_model_dir = './out_models_abc'
 
