@@ -53,3 +53,5 @@ def query(q=None,idx=None,v=None):
 query("man")
 
 query(v=(w[word2index["summer"]] - w[word2index["hot"]] + w[word2index["cold"]]))
+query(v=(w[word2index["Paris"]] - w[word2index["France"]] + w[word2index["Italy"]]))
+query(v=(w[word2index["right"]] - w[word2index["left"]] + w[word2index["man"]]))

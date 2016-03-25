@@ -86,3 +86,8 @@ pip install chainer
 
 勿論成功！
 
+##ディレクトリごとの容量をチェックする
+
+[http://www.linuxmaster.jp/linux_skill/2012/12/post-144.html](http://www.linuxmaster.jp/linux_skill/2012/12/post-144.html)  
+
+

@@ -72,6 +72,7 @@ rands = np.random.uniform(0.0, 1.0, 5)
 print rands
 rands = np.random.uniform(0.0, 1.0, (5,5))
 print rands
+print np.round(rands)
 
 arr10 = np.array([
     [[1,2,3],[2,3,4],[3,4,5]],

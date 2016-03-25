@@ -48,6 +48,8 @@ fs = os.listdir(image_dir)
 print len(fs)
 dataset = []
 for fn in fs:
+    if not fn.endswith(".png"):
+        continue
     f = open('%s/%s' % (image_dir, fn), 'rb')
     img_bin = f.read()
     dataset.append(img_bin)

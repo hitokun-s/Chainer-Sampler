@@ -23,7 +23,7 @@ import chainer.links as L
 
 import numpy
 
-from lib import *
+from lib_aa import *
 
 using_gpu = False
 xp = np
@@ -36,23 +36,26 @@ except:
     print  "I'm sorry. Using CPU."
 
 image_dir = './images48'
-out_image_dir = './out_images'
-out_model_dir = './out_models'
+out_image_dir = './out_images_aa'
+out_model_dir = './out_models_aa'
 
 nz = 100  # # of dim for Z
+sample_size = 2
 z_sample_size = 52
+t_sample_size = 52
 n_epoch = 500000
-n_train = 52
-image_save_interval = 51
 
 fs = os.listdir(image_dir)
 print len(fs)
 dataset = []
+i = 0
 for fn in fs:
-    f = open('%s/%s' % (image_dir, fn), 'rb')
-    img_bin = f.read()
-    dataset.append(img_bin)
-    f.close()
+    if fn.endswith(".png") and i < sample_size:
+        f = open('%s/%s' % (image_dir, fn), 'rb')
+        img_bin = f.read()
+        dataset.append(img_bin)
+        f.close()
+        i += 1
 print len(dataset)
 
 # sizeは、1次元なら数字、多次元ならタプル
@@ -73,6 +76,7 @@ def binarize(ndArr, th=50):
     for i in range(rowCnt):
         for j in range(colCnt):
             ndArr[i][j] = -1 if ndArr[i][j] > th else 1 # 白（背景）を-1に、黒を1にしている
+    print ndArr
     return ndArr
 
 def train_dcgan_labeled(gen, dis, o_gen, o_dis, epoch0=0):
@@ -91,62 +95,60 @@ def train_dcgan_labeled(gen, dis, o_gen, o_dis, epoch0=0):
         res = np.asarray(Image.open(StringIO(dataset[j])).convert('L')).astype(np.float32)
         res.flags.writeable = True
         x2[j, :, :, :] = binarize(res, 50)
+    x2 = x2.astype(np.int32)
     # x2 = Variable(cuda.to_gpu(x2) if using_gpu else x2)
     # ----------------------------------------------------------------------------------
 
     for epoch in xrange(epoch0, n_epoch):
-        # perm = np.random.permutation(n_train)
+
         sum_l_dis = np.float32(0)
         sum_l_gen = np.float32(0)
 
-        for j in range(52):
-            sample = np.zeros((1, 1, 48, 48), dtype=np.float32)
-            sample[0, :, :, :] = x2[j]
+        for j in range(10):
+            sample = np.zeros((t_sample_size, 1, 48, 48), dtype=np.float32)
+            perm = np.random.permutation(52)
+            selected = x2[perm[:t_sample_size]] # サンプルからランダムにt_sample_size個取り出す
+            for k in range(t_sample_size):
+                sample[k, :, :, :] = selected[k % 52]
+            _sample = sample.astype(np.float32)
+            _sample = Variable(cuda.to_gpu(_sample) if using_gpu else _sample)
+
+            z = F.sigmoid(dis(_sample))
+            z.data = (z.data - 0.5) * 2
+            # print z.data[0]
+            x = gen(z)
+
             sample = Variable(cuda.to_gpu(sample) if using_gpu else sample)
 
-            # train generator
-            # gen画像をdisに入力したときにdis出力＝０になるように学習させる
-            z = Variable(generate_rand(-1, 1, (z_sample_size, nz), dtype=np.float32))
-            x = gen(z)
-            yl = dis(x)
-            L_gen = F.softmax_cross_entropy(yl, Variable(xp.zeros(z_sample_size, dtype=np.int32)))
-            L_dis = F.softmax_cross_entropy(yl, Variable(xp.ones(z_sample_size, dtype=np.int32)))
+            # L_gen = F.softmax_cross_entropy(x, sample)
+            # L_dis = F.softmax_cross_entropy(x, sample)
 
-            # train discriminator
-            # サンプル画像を入力したときはdis出力＝０、gen画像を入力したときはdis出力＝１になるように学習させる
-
-            # x2 = Variable(cuda.to_gpu(x2) if using_gpu else x2)
-            yl2 = dis(sample) # サンプル画像を入力したときのdis出力
-            L_dis += F.softmax_cross_entropy(yl2, Variable(xp.zeros(1, dtype=np.int32)))
-
-            # L_disには2種類の誤差が合計されるので、
-            # - サンプル画像を入力した出力は0に近くなるように、
-            # - gen画像を入力した出力は１に近くなるように、
-            # 学習されるはず。
-
-            o_gen.zero_grads()
-            L_gen.backward()
-            o_gen.update()
+            L_gen = F.mean_squared_error(x, sample)
+            L_dis = F.mean_squared_error(x, sample)
 
             o_dis.zero_grads()
             L_dis.backward()
             o_dis.update()
 
+            o_gen.zero_grads()
+            L_gen.backward()
+            o_gen.update()
+
             sum_l_gen += L_gen.data.get() # gen出力の誤差（交差エントロピー）を加算
             sum_l_dis += L_dis.data.get() # dis出力の誤差（交差エントロピー）を加算
 
-        if epoch % 500 == 0:
+        if epoch % 20 == 0:
             pylab.rcParams['figure.figsize'] = (16.0, 16.0)
             pylab.clf()
-            z = zvis
-            z[50:, :] = (xp.random.uniform(-1, 1, (50, nz), dtype=np.float32))
-            z = Variable(z)
-            x = gen(z, test=True)
+            # z = zvis
+            # z[50:, :] = (xp.random.uniform(-1, 1, (50, nz), dtype=np.float32))
+            # z = Variable(z)
+            # x = gen(z, test=True)
             x = x.data.get()
-            for i_ in range(100):
+            for i_ in range(52):
                 # tmp = ((np.vectorize(clip_img)(x[i_, :, :, :]) + 1) / 2).transpose(1, 2, 0)
                 tmp = np.vectorize(clip_img)(x[i_, 0, :, :])
-                pylab.subplot(10, 10, i_ + 1)
+                pylab.subplot(10, 10, i_ + 0.5)
                 pylab.gray()
                 pylab.imshow(tmp)
                 pylab.axis('off')
@@ -157,10 +159,10 @@ def train_dcgan_labeled(gen, dis, o_gen, o_dis, epoch0=0):
             serializers.save_hdf5("%s/dcgan_state_gen.h5" % out_model_dir, o_gen)
 
         # sum_l_dis:交差エントロピーの和
-        print 'epoch end', epoch, sum_l_gen / n_train, sum_l_dis / n_train
+        print 'epoch end', epoch, sum_l_gen, sum_l_dis
 
 gen = Generator(nz=nz)
-dis = Discriminator()
+dis = Discriminator(nz=nz)
 o_gen = optimizers.Adam(alpha=0.0002, beta1=0.5)
 o_dis = optimizers.Adam(alpha=0.0002, beta1=0.5)
 o_gen.setup(gen)

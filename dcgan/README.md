@@ -4,3 +4,7 @@ original:[https://github.com/mattya/chainer-DCGAN](https://github.com/mattya/cha
 
 ImageMagickを使ったbatファイルを作成した（multi_resize.bat）  
 
+##deconvolution netweok
+
+[http://cvlab.postech.ac.kr/research/deconvnet](http://cvlab.postech.ac.kr/research/deconvnet)
+

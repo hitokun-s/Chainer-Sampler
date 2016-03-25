@@ -36,8 +36,8 @@ try:
         for i in (-similarity).argsort():
             if numpy.isnan(similarity[i]):
                 continue
-            if index2word[i] == q:
-                continue
+            # if index2word[i] == q:
+            #     continue
             print('{0}: {1}'.format(index2word[i], similarity[i]))
             count += 1
             if count == n_result:

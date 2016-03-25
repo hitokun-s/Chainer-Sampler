@@ -12,3 +12,12 @@ https://code.google.com/p/word2vec/
 
 参考：  
 [http://chainernlpman.hatenablog.com/entry/2015/12/02/022151](http://chainernlpman.hatenablog.com/entry/2015/12/02/022151)  
+
+# 英語コーパス
+
+[http://www.cs.upc.edu/~nlp/wikicorpus/](http://www.cs.upc.edu/~nlp/wikicorpus/)  
+
+アイデア：  
+rawでそのままword2vecを実行すると、語彙数が1億超になってしまいメモリエラーで実行できない。  
+taggedデータの2つ目（lemmatizedのやつ）を用いて、かつ英語辞書に登録のないもの（変な数字とか）は除く。  
+

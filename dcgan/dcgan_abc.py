@@ -40,15 +40,17 @@ out_image_dir = './out_images_abc'
 out_model_dir = './out_models_abc'
 
 nz = 100  # # of dim for Z
-z_sample_size = 3
-t_sample_size = 3
+sample_size = 3
+z_sample_size = 100
+t_sample_size = 100
 n_epoch = 500000
 
 fs = os.listdir(image_dir)
 print len(fs)
 dataset = []
+i = 0
 for fn in fs:
-    if fn.startswith("img011") or fn.startswith("img012") or fn.startswith("img013"):
+    if fn.endswith(".png") and i < sample_size:
         f = open('%s/%s' % (image_dir, fn), 'rb')
         img_bin = f.read()
         dataset.append(img_bin)
@@ -73,6 +75,7 @@ def binarize(ndArr, th=50):
     for i in range(rowCnt):
         for j in range(colCnt):
             ndArr[i][j] = -1 if ndArr[i][j] > th else 1 # 白（背景）を-1に、黒を1にしている
+    print ndArr
     return ndArr
 
 def train_dcgan_labeled(gen, dis, o_gen, o_dis, epoch0=0):
@@ -86,8 +89,8 @@ def train_dcgan_labeled(gen, dis, o_gen, o_dis, epoch0=0):
 
     # サンプル52にしたことだし、もう固定で作ってしまう
     # ----------------------------------------------------------------------------------
-    x2 = np.zeros((52, 1, 48, 48), dtype=np.float32)
-    for j in range(52):
+    x2 = np.zeros((sample_size, 1, 48, 48), dtype=np.float32)
+    for j in range(sample_size):
         res = np.asarray(Image.open(StringIO(dataset[j])).convert('L')).astype(np.float32)
         res.flags.writeable = True
         x2[j, :, :, :] = binarize(res, 50)
@@ -99,13 +102,12 @@ def train_dcgan_labeled(gen, dis, o_gen, o_dis, epoch0=0):
         sum_l_dis = np.float32(0)
         sum_l_gen = np.float32(0)
 
-        for j in range(5):
+        for j in range(10):
             sample = np.zeros((t_sample_size, 1, 48, 48), dtype=np.float32)
-
-            perm = np.random.permutation(52)
+            perm = np.random.permutation(sample_size)
             selected = x2[perm[:t_sample_size]] # サンプルからランダムにt_sample_size個取り出す
             for k in range(t_sample_size):
-                sample[k, :, :, :] = selected[k]
+                sample[k, :, :, :] = selected[k % sample_size]
             sample = Variable(cuda.to_gpu(sample) if using_gpu else sample)
 
             # train generator
@@ -123,6 +125,14 @@ def train_dcgan_labeled(gen, dis, o_gen, o_dis, epoch0=0):
             yl2 = dis(sample) # サンプル画像を入力したときのdis出力
             L_dis += F.softmax_cross_entropy(yl2, Variable(xp.zeros(t_sample_size, dtype=np.int32)))
 
+            # noiseを入れてみる
+            noises = np.zeros((t_sample_size, 1, 48, 48), dtype=np.float32)
+            for k in range(t_sample_size):
+               noises[k, 0, :, :] = np.round(np.random.uniform(0.0, 1.0, (48,48)))
+            noises = Variable(cuda.to_gpu(noises) if using_gpu else noises)
+            nnn = dis(noises) # サンプル画像を入力したときのdis出力
+            L_dis += F.softmax_cross_entropy(nnn, Variable(xp.ones(t_sample_size, dtype=np.int32)))
+
             # L_disには2種類の誤差が合計されるので、
             # - サンプル画像を入力した出力は0に近くなるように、
             # - gen画像を入力した出力は１に近くなるように、
@@ -139,18 +149,17 @@ def train_dcgan_labeled(gen, dis, o_gen, o_dis, epoch0=0):
             sum_l_gen += L_gen.data.get() # gen出力の誤差（交差エントロピー）を加算
             sum_l_dis += L_dis.data.get() # dis出力の誤差（交差エントロピー）を加算
 
-        if epoch % 500 == 0:
+        if epoch % 10 == 0:
             pylab.rcParams['figure.figsize'] = (16.0, 16.0)
             pylab.clf()
-            z = zvis
-            z[50:, :] = (xp.random.uniform(-1, 1, (50, nz), dtype=np.float32))
+            z = (generate_rand(-1, 1, (100, nz), dtype=np.float32))
             z = Variable(z)
             x = gen(z, test=True)
             x = x.data.get()
             for i_ in range(100):
                 # tmp = ((np.vectorize(clip_img)(x[i_, :, :, :]) + 1) / 2).transpose(1, 2, 0)
                 tmp = np.vectorize(clip_img)(x[i_, 0, :, :])
-                pylab.subplot(10, 10, i_ + 1)
+                pylab.subplot(10, 10, i_ + 0.5)
                 pylab.gray()
                 pylab.imshow(tmp)
                 pylab.axis('off')
