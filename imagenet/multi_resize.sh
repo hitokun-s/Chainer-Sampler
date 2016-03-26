@@ -6,7 +6,8 @@ echo start!
 i=1
 for imgfile in $( ls images ); do
     echo $i
-    mogrify -resize 256x256 "images/${imggile}"
+    echo "images/$imggile"
+    mogrify -resize 256x256 "images/$imggile"
 
     # iを$i+1で上書きする
     i=$((i+1))
