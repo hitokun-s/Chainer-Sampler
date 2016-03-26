@@ -13,3 +13,4 @@ dcgan/out_images/
 dcgan/images48/
 catch-up/data/
 word2vec/data/
+imagenet/images/
