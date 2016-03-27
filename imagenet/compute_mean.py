@@ -24,9 +24,14 @@ for i, line in enumerate(open(args.dataset)):
     if not filepath.endswith(".jpg"):
         print "not jpg file. skip..."
         continue
-    print "idx:%d" % i
-    print "file:%s" % filepath
-    image = numpy.asarray(Image.open(filepath)).transpose(2, 0, 1)
+    try:
+        image = numpy.asarray(Image.open(filepath)).transpose(2, 0, 1)
+    except:
+        print "idx:%d" % i
+        print "file:%s" % filepath
+        print sys.exc_info()[0]
+        continue
+
     if sum_image is None:
         sum_image = numpy.ndarray(image.shape, dtype=numpy.float32)
         sum_image[:] = image
