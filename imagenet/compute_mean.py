@@ -19,11 +19,13 @@ args = parser.parse_args()
 
 sum_image = None
 count = 0
-for line in open(args.dataset):
+for i, line in enumerate(open(args.dataset)):
     filepath = os.path.join(args.root, line.strip().split()[0])
     if not filepath.endswith(".jpg"):
         print "not jpg file. skip..."
         continue
+    print "idx:%d" % i
+    print "file:%s" % filepath
     image = numpy.asarray(Image.open(filepath)).transpose(2, 0, 1)
     if sum_image is None:
         sum_image = numpy.ndarray(image.shape, dtype=numpy.float32)
@@ -33,8 +35,8 @@ for line in open(args.dataset):
         # broadcast ... サイズ/形状の異なる配列同士の演算のこと
         sum_image += image
     count += 1
-    sys.stderr.write('\r{}'.format(count))
-    sys.stderr.flush()
+    # sys.stderr.write('\r{}'.format(count))
+    # sys.stderr.flush()
 
 sys.stderr.write('\n')
 
