@@ -6,6 +6,9 @@ import os
 from PIL import Image
 
 for i, imgpath in enumerate(os.listdir("images")):
+    if not imgpath.endswith(".jpg"):
+        print "not image file!:%s" % imgpath
+        continue
     print i
     img = Image.open("images/" + imgpath)
     size = min(img.height, img.width)
