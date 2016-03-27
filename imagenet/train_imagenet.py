@@ -33,8 +33,8 @@ from chainer import serializers
 
 parser = argparse.ArgumentParser(
     description='Learning convnet from ILSVRC2012 dataset')
-parser.add_argument('train', help='Path to training image-label list file')
-parser.add_argument('val', help='Path to validation image-label list file')
+parser.add_argument('--train', default='train.txt', help='Path to training image-label list file')
+parser.add_argument('--test', default='test.txt', help='Path to validation image-label list file')
 parser.add_argument('--mean', '-m', default='mean.npy',
                     help='Path to the mean file (computed by compute_mean.py)')
 parser.add_argument('--arch', '-a', default='nin',
@@ -77,7 +77,7 @@ def load_image_list(path, root):
 
 # Prepare dataset
 train_list = load_image_list(args.train, args.root)
-val_list = load_image_list(args.val, args.root)
+val_list = load_image_list(args.test, args.root)
 mean_image = pickle.load(open(args.mean, 'rb'))
 
 # Prepare model
@@ -291,6 +291,8 @@ def train_loop():
         volatile = 'off' if model.train else 'on'
         x = chainer.Variable(xp.asarray(inp[0]), volatile=volatile)
         t = chainer.Variable(xp.asarray(inp[1]), volatile=volatile)
+
+        print("++++++++++++++++++++++++++++")
 
         if model.train:
             optimizer.update(model, x, t)
