@@ -44,9 +44,9 @@ parser.add_argument('--batchsize', '-B', type=int, default=32,
                     help='Learning minibatch size')
 parser.add_argument('--val_batchsize', '-b', type=int, default=250,
                     help='Validation minibatch size')
-parser.add_argument('--epoch', '-E', default=10, type=int,
+parser.add_argument('--epoch', '-E', default=100, type=int,
                     help='Number of epochs to learn')
-parser.add_argument('--gpu', '-g', default=-1, type=int,
+parser.add_argument('--gpu', '-g', default=0, type=int,
                     help='GPU ID (negative value indicates CPU)')
 parser.add_argument('--loaderjob', '-j', default=20, type=int,
                     help='Number of parallel data loading processes')
@@ -291,8 +291,6 @@ def train_loop():
         volatile = 'off' if model.train else 'on'
         x = chainer.Variable(xp.asarray(inp[0]), volatile=volatile)
         t = chainer.Variable(xp.asarray(inp[1]), volatile=volatile)
-
-        print("++++++++++++++++++++++++++++")
 
         if model.train:
             optimizer.update(model, x, t)
