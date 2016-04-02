@@ -48,6 +48,10 @@ for i, imgpath in enumerate(os.listdir(train_image_dir)):
 
 # -----------------------------------------------------
 
+print "====================================="
+print "start compute mean!"
+print "====================================="
+
 parser = argparse.ArgumentParser(description='Compute images mean array')
 parser.add_argument('--dataset', '-d', help='Path to training image-label list file',  default='train.txt')
 parser.add_argument('--root', '-r', default='.',
@@ -60,7 +64,7 @@ sum_image = None
 count = 0
 for i, line in enumerate(open(args.dataset)):
     filepath = os.path.join(args.root, line.strip().split()[0])
-    if not filepath.endswith(".jpg"):
+    if not imgpath.endswith(".jpg") and not imgpath.endswith(".JPEG"):
         print "not jpg file. skip..."
         continue
     try:
