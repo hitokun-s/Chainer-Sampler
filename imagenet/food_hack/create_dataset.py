@@ -19,7 +19,7 @@ import sqlite3
 import tarfile
 from bbox_helper import *
 
-sample_cnt = 70
+sample_cnt = 150
 
 conn = sqlite3.connect("food.sqlite")
 c = conn.cursor()
