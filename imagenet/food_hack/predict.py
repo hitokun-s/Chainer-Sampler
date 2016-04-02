@@ -93,13 +93,30 @@ def predict_core(img):
     t2 = chainer.Variable(xp.asarray([1]).astype(np.int32), volatile=volatile)
     t3 = chainer.Variable(xp.asarray([2]).astype(np.int32), volatile=volatile)
 
+    model.predict(x)
+
     # print(model.predictor(x).data)
-    print(model(x,t1).data)
-    print(model(x,t2).data)
-    print(model(x,t3).data)
+    # print(model(x,t1).data)
+    # print(model(x,t2).data)
+    # print(model(x,t3).data)
+
+def predict_core_multi(imgs):
+    x_batch = np.ndarray((len(imgs), 3, model.insize, model.insize), dtype=np.float32)
+    for (i,img) in enumerate(imgs):
+        x_batch[i] = img
+    volatile = 'on'
+    x = chainer.Variable(xp.asarray(x_batch), volatile=volatile)
+    # t1 = chainer.Variable(xp.asarray([0]).astype(np.int32), volatile=volatile)
+    # t2 = chainer.Variable(xp.asarray([1]).astype(np.int32), volatile=volatile)
+    # t3 = chainer.Variable(xp.asarray([2]).astype(np.int32), volatile=volatile)
+
+    model.predict(x)
 
 def predict_by_data(ndArrData):
     return predict_core(read_image_data(ndArrData, False, True))
+
+def predict_by_data_multi(ndArrDatas):
+    return predict_core_multi([read_image_data(arr, False, True) for arr in ndArrDatas])
 
 def predict(file_path):
     return predict_core(read_image(file_path, False, True))

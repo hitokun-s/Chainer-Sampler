@@ -1,8 +1,12 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import math
 
 import chainer
 import chainer.functions as F
 import chainer.links as L
+import numpy as np
 
 
 class NIN(chainer.Chain):
@@ -40,3 +44,23 @@ class NIN(chainer.Chain):
         self.loss = F.softmax_cross_entropy(h, t)
         self.accuracy = F.accuracy(h, t)
         return self.loss
+
+    def predict(self, x):
+        self.clear()
+        h = F.max_pooling_2d(F.relu(self.mlpconv1(x)), 3, stride=2)
+        h = F.max_pooling_2d(F.relu(self.mlpconv2(h)), 3, stride=2)
+        h = F.max_pooling_2d(F.relu(self.mlpconv3(h)), 3, stride=2)
+        h = self.mlpconv4(F.dropout(h, train=self.train))
+        h = F.reshape(F.average_pooling_2d(h, 6), (x.data.shape[0], 1000))
+        # return F.softmax(h).data
+        answers = np.argmax(h.data, axis=1)
+        print answers
+        #  chainer.Variable(xp.asarray([0]).astype(np.int32), volatile=volatile)
+        t = chainer.Variable(answers.astype(np.int32), volatile='on')
+        sfe = F.softmax_cross_entropy(h, t).data
+        # print math.exp(-sfe)
+        print sfe
+        # e_s = np.exp(h.data) # 各サンプルの各入力値の指数を取る
+        # z_s = e_s.sum(axis=1) # 各サンプルごとに、指数の和を計算
+        # probs = e_s[np.arange(len(e_s)), answers] / z_s # 各サ
+        return answers

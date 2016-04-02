@@ -10,13 +10,14 @@ import os
 import predict
 
 # arg: cropped PIL.Image object
-def resize_and_predict(img):
+def resize(img):
     size = min(img.size) # img.size は、(width, height)というタプルを返す。PILのバージョンによっては、img.width, img.heightも使えるが。
     start_x = img.size[0] / 2 - size / 2
     start_y = img.size[1] / 2 - size / 2
     box = (start_x, start_y, start_x + size, start_y + size) #  box is a 4-tuple defining the left, upper, right, and lower pixel coordinate.
     img = img.crop(box).resize((256, 256), Image.ANTIALIAS)
-    predict.read_image_data(np.asarray(img))
+    # predict.predict_by_data(np.asarray(img))
+    return img
 
 def main():
 
@@ -35,8 +36,7 @@ def main():
     img = io.imread(tgt_img_path)
 
     # perform selective search
-    img_lbl, regions = selectivesearch.selective_search(
-            img, scale=500, sigma=0.9, min_size=10)
+    img_lbl, regions = selectivesearch.selective_search(img, scale=500, sigma=0.9, min_size=10)
 
     candidates = set()
     for r in regions:
@@ -53,8 +53,11 @@ def main():
         candidates.add(r['rect'])
 
     img = Image.open(tgt_img_path)
-    for rect in candidates:
-        resize_and_predict(img.crop(rect))
+    imgs = [resize(img.crop(rect)) for rect in candidates]
+    # for rect in candidates:
+    #     print rect
+    #     img = resize(img.crop(rect))
+    predict.predict_by_data_multi(imgs)
 
     # fig, ax = plt.subplots(ncols=1, nrows=1, figsize=(6, 6))
     # ax.imshow(img)
