@@ -34,7 +34,7 @@ print "====================================="
 print "start resize!"
 print "====================================="
 for i, imgpath in enumerate(os.listdir(train_image_dir)):
-    if not imgpath.endswith(".jpg"):
+    if not imgpath.endswith(".jpg") and not imgpath.endswith(".JPEG"):
         print "not image file!:%s" % imgpath
         continue
     print i
