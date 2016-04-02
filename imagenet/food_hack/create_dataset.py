@@ -36,7 +36,11 @@ def download_bbox_xml(wnid):
     if os.path.exists(savePath):
         print "already exists:%s" % savePath
         return
-    urlretrieve("http://image-net.org/downloads/bbox/bbox/%s.tar.gz" % wnid, savePath)
+    url = "http://image-net.org/downloads/bbox/bbox/%s.tar.gz" % wnid
+    if not isValidUrl(url):
+        print "invalid url:%s" % url
+        return
+    urlretrieve(url, savePath)
     tf = tarfile.open(savePath, "r:gz")
     # 解凍してxmlをdata/bbox以下に移す
     tf.extractall("data/bbox/")
@@ -110,7 +114,7 @@ def del_all_invalid_image(dirPath):
     for fileName in os.listdir(dirPath):
         del_invalid_image(dirPath + fileName)
 
-def isValidImageUrl(url):
+def isValidUrl(url):
     try:
         return urlopen(url).code == 200
     except:
@@ -125,7 +129,7 @@ def dowmload_image(wnid):
         if os.path.exists(imgPath):
             print "image exists:%s" % imgPath
             continue
-        if isValidImageUrl(url):
+        if isValidUrl(url):
             print "loading...:%s" % image_id
             urlretrieve(row[1], imgPath)
         # del_invalid_image(imgPath)
