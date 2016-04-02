@@ -19,7 +19,7 @@ import sqlite3
 import tarfile
 from bbox_helper import *
 
-sample_cnt = 50
+sample_cnt = 70
 
 conn = sqlite3.connect("food.sqlite")
 c = conn.cursor()
@@ -97,7 +97,11 @@ def saveAsBoudingBoxImg(image_id):
     print bbhelper.findImagePath()
     # Search image path according to bounding box xml, and crop it
     print bbhelper.get_BoudingBoxs()
-    bbhelper.saveBoundBoxImage(imgPath=imgFilePath, outputFolder="data/bbox_image")
+    try:
+        bbhelper.saveBoundBoxImage(imgPath=imgFilePath, outputFolder="data/bbox_image")
+    except:
+        # 画像ファイルが存在しなかった場合
+        print "error! maybe image not exists"
 
 def del_invalid_image(imgPath):
     # 画像ファイルではない場合、もしくは、3kb以下の場合（flickerでの無効画像）に削除する。データも。
@@ -167,7 +171,7 @@ def createBboxImage(wnid):
 # orange
 
 targets = [
-    "n07722217", # onion
+    # "n07722217", # onion
     # "n07730207", # carrot
     "n07735510", # pumpkin
     "n07734017", # tomato
