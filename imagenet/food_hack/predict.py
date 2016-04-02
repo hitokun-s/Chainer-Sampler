@@ -55,8 +55,8 @@ if args.gpu >= 0:
 optimizer = optimizers.MomentumSGD(lr=0.01, momentum=0.9)
 optimizer.setup(model)
 
-serializers.load_npz(os.path.dirname(__file__) + 'model', model)
-serializers.load_npz(os.path.dirname(__file__) + 'state', optimizer)
+serializers.load_npz(os.path.join(os.path.dirname(__file__), 'model'), model)
+serializers.load_npz(os.path.join(os.path.dirname(__file__), 'state'), optimizer)
 
 
 mean_image = pickle.load(open("mean.npy", 'rb'))
