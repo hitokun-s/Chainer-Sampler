@@ -137,8 +137,6 @@ def dowmload_image(wnid):
 # bbox xml is PASCAL VOC format
 # https://github.com/tzutalin/ImageNet_Utils というのがある
 
-# del_all_invalid_image("data/image/")
-
 def createBboxImage(wnid):
     c = conn.cursor()
     c.execute("select id from material_image where wnid = ?", (wnid,))
@@ -165,6 +163,8 @@ def create(target_wnid):
 
 for tgt in targets:
     create(tgt)
+
+del_all_invalid_image("data/image/")
 
 conn.close()
 
