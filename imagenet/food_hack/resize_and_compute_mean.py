@@ -20,6 +20,7 @@ if os.path.exists("train.txt"):
 f = open("train.txt","w")
 for fileName in os.listdir(train_image_dir):
     image_id = fileName[:fileName.index("_box")]
+    print "image_id:%s" % image_id
     if image_id in targets:
         print "find target!:%s" % fileName
         classIdx = targets.index(image_id)
