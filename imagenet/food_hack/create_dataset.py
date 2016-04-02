@@ -19,6 +19,8 @@ import sqlite3
 import tarfile
 from bbox_helper import *
 
+sample_cnt = 50
+
 conn = sqlite3.connect("food.sqlite")
 c = conn.cursor()
 # c.execute("CREATE TABLE IF NOT EXISTS material_image (id VARCHAR PRIMARY KEY  NOT NULL , url VARCHAR, file_path VARCHAR, xml_path VARCHAR, wnid VARCHAR, parent_wnid VARCHAR)")
@@ -122,7 +124,11 @@ def isValidUrl(url):
 
 def dowmload_image(wnid):
     c.execute("select id, url from material_image where wnid = ?", (wnid,))
+    cnt = 0
     for row in c:
+        cnt += 1
+        if cnt > sample_cnt:
+            break
         image_id = row[0]
         url = row[1]
         imgPath = "data/image/%s.jpg" % image_id
