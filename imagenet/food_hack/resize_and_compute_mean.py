@@ -19,11 +19,11 @@ if os.path.exists("train.txt"):
     os.remove("train.txt")
 f = open("train.txt","w")
 for fileName in os.listdir(train_image_dir):
-    image_id = fileName[:fileName.index("_box")]
-    print "image_id:%s" % image_id
-    if image_id in targets:
+    wnid = fileName[:fileName.index("_")]
+    print "wnid:%s" % wnid
+    if wnid in targets:
         print "find target!:%s" % fileName
-        classIdx = targets.index(image_id)
+        classIdx = targets.index(wnid)
         f.write((train_image_dir + "%s %d") % (fileName, classIdx) + "\n")
 f.close()
 # ---------------------------------------------------
