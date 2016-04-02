@@ -19,6 +19,13 @@ if os.path.exists("train.txt"):
     os.remove("train.txt")
 f = open("train.txt","w")
 for fileName in os.listdir(train_image_dir):
+    filePath = train_image_dir + fileName
+    try:
+        numpy.asarray(Image.open(filePath)).transpose(2, 0, 1)
+    except:
+        print "broken file"
+        os.remove(filePath)
+        continue
     wnid = fileName[:fileName.index("_")]
     print "wnid:%s" % wnid
     if wnid in targets:
