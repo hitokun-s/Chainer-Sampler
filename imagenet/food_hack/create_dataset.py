@@ -156,7 +156,7 @@ def createBboxImage(wnid):
 
 targets = [
     "n07722217", # onion
-    "n01219722", # carrot
+    "n07730207", # carrot
     "n07734017", # tomato
     "n07747607", # orange
     "n07739125", # apple
