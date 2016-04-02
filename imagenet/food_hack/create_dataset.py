@@ -79,7 +79,8 @@ def del_image(image_id):
     print "deleting image from db:%s" % image_id
     c.execute("delete from material_image where id = ?", (image_id, ))
     imgPath = "data/image/%s.jpg" % image_id
-    os.remove(imgPath)
+    if os.path.exists(imgPath):
+        os.remove(imgPath)
 
 def saveAsBoudingBoxImg(image_id):
     wnid = image_id[:image_id.index("_")]
