@@ -32,8 +32,12 @@ def get_all_sub_synset(wnid):
     return [line[1:] for line in soup.text.strip().split("\n")[1:]]
 
 def download_bbox_xml(wnid):
-    urlretrieve("http://image-net.org/downloads/bbox/bbox/%s.tar.gz" % wnid,"tmp/%s.tar.gz" % wnid)
-    tf = tarfile.open("tmp/%s.tar.gz" % wnid, "r:gz")
+    savePath = "tmp/%s.tar.gz" % wnid
+    if os.path.exists(savePath):
+        print "already exists:%s" % savePath
+        return
+    urlretrieve("http://image-net.org/downloads/bbox/bbox/%s.tar.gz" % wnid, savePath)
+    tf = tarfile.open(savePath, "r:gz")
     # 解凍してxmlをdata/bbox以下に移す
     tf.extractall("data/bbox/")
     tf.close()
@@ -65,9 +69,11 @@ def get_img_url_with_id(wnid):
 #     print "let's go to:%s" % wnid
 #     get_img_url_with_id(wnid)
 
-def del_image_from_db(image_id):
+def del_image(image_id):
     print "deleting image from db:%s" % image_id
     c.execute("delete from material_image where id = ?", (image_id, ))
+    imgPath = "data/image/%s.jpg" % image_id
+    os.remove(imgPath)
 
 def saveAsBoudingBoxImg(image_id):
     wnid = image_id[:image_id.index("_")]
@@ -78,7 +84,7 @@ def saveAsBoudingBoxImg(image_id):
         bbhelper = BBoxHelper(xmlFilePath)
     except:
         # もしxmlがなかったらデータを消す
-        del_image_from_db(image_id)
+        del_image(image_id)
         print "xml not exists"
         return
     print bbhelper.findImagePath()
@@ -87,12 +93,18 @@ def saveAsBoudingBoxImg(image_id):
     bbhelper.saveBoundBoxImage(imgPath=imgFilePath, outputFolder="data/bbox_image")
 
 def del_invalid_image(imgPath):
+    # 画像ファイルではない場合、もしくは、3kb以下の場合（flickerでの無効画像）に削除する。データも。
+    imgName = imgPath.split("/")[-1]
+    image_id = imgName[:imgName.index(".")]
     try:
         im = Image.open(imgPath)
         im.verify()
+        if os.path.getsize(file) < 4:
+            print "delete too small file:%s" % imgPath
+            del_image(image_id)
     except:
         print "dele invalid file:%s" % imgPath
-        os.remove(imgPath)
+        del_image(image_id)
 
 def del_all_invalid_image(dirPath):
     for fileName in os.listdir(dirPath):
@@ -108,6 +120,9 @@ def dowmload_image(wnid):
     c.execute("select id, url from material_image where wnid = ?", (wnid,))
     for row in c:
         imgPath = "data/image/%s.jpg" % row[0]
+        if os.path.exists(imgPath):
+            print "image exists:%s" % imgPath
+            continue
         url = row[1]
         if isValidImageUrl(url):
             urlretrieve(row[1], imgPath)
