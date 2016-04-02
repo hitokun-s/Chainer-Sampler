@@ -15,8 +15,9 @@ def getTargets():
         # "n07735687", # radish
         # "n07824702", # Paprika
         "n07723559", # Lettuce
-        "n07818422", # garlic
-        "n07711799", # potato
-        "n07721018", # green pepper
+        # "n07818422", # garlic
+        # "n07711799", # potato
+        # "n07721018", # green pepper
+        "n07758680", # grape
 
     ]
