@@ -124,7 +124,9 @@ def isValidUrl(url):
         return False
 
 def get_image_file_names(wnid):
-    return [fileName for fileName in os.listdir("data/image/") if fileName.startswith(wnid)]
+    res = [fileName for fileName in os.listdir("data/image/") if fileName.startswith(wnid)]
+    print res
+    return res
 
 
 def dowmload_image(wnid):
