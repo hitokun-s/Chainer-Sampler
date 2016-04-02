@@ -123,7 +123,14 @@ def isValidUrl(url):
     except:
         return False
 
+def get_image_file_names(wnid):
+    return [fileName for fileName in os.listdir("data/image/") if fileName.startswith(wnid)]
+
+
 def dowmload_image(wnid):
+    if len(get_image_file_names(wnid)) > sample_cnt:
+        print "we already have enough samples for wnid:%s" % wnid
+        return
     c.execute("select id, url from material_image where wnid = ?", (wnid,))
     cnt = 0
     for row in c:
