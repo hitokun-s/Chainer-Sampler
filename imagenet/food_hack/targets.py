@@ -12,7 +12,11 @@ def getTargets():
         "n07753592", # banana
         "n07745940", # strawberry
         # "n07713074", # eggplant
-        "n07735687", # radish
-        "n07824702", # Paprika
+        # "n07735687", # radish
+        # "n07824702", # Paprika
         "n07723559", # Lettuce
+        "n07818422", # garlic
+        "n07711799", # potato
+        "n07721018", # green pepper
+
     ]
