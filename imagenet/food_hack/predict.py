@@ -93,7 +93,7 @@ def predict_core(img):
     t2 = chainer.Variable(xp.asarray([1]).astype(np.int32), volatile=volatile)
     t3 = chainer.Variable(xp.asarray([2]).astype(np.int32), volatile=volatile)
 
-    model.predict(x)
+    return model.predict(x)
 
     # print(model.predictor(x).data)
     # print(model(x,t1).data)

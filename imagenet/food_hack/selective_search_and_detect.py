@@ -17,7 +17,7 @@ def resize(img):
     box = (start_x, start_y, start_x + size, start_y + size) #  box is a 4-tuple defining the left, upper, right, and lower pixel coordinate.
     img = img.crop(box).resize((256, 256), Image.ANTIALIAS)
     # predict.predict_by_data(np.asarray(img))
-    return img
+    return np.asarray(img)
 
 def main():
 
@@ -53,20 +53,25 @@ def main():
         candidates.add(r['rect'])
 
     img = Image.open(tgt_img_path)
-    imgs = [resize(img.crop(rect)) for rect in candidates]
-    # for rect in candidates:
-    #     print rect
-    #     img = resize(img.crop(rect))
-    predict.predict_by_data_multi(imgs)
+    # imgs = [resize(img.crop(rect)) for rect in candidates]
+    res = []
+    for rect in candidates:
+        print rect
+        cropped_img = resize(img.crop(rect))
+        (answer, prob) = predict.predict_by_data(cropped_img)
+        if prob > 0.9:
+            res.append((rect,answer))
 
-    # fig, ax = plt.subplots(ncols=1, nrows=1, figsize=(6, 6))
-    # ax.imshow(img)
-    # for x, y, w, h in candidates:
-    #     print x, y, w, h
-    #     rect = mpatches.Rectangle(
-    #             (x, y), w, h, fill=False, edgecolor='red', linewidth=1)
-    #     ax.add_patch(rect)
-    # plt.show()
+    fig, ax = plt.subplots(ncols=1, nrows=1, figsize=(6, 6))
+    ax.imshow(img)
+
+    for v in res:
+        x, y, w, h = v[0] # rect object
+        print v[1] # answer
+        print x, y, w, h
+        rect = mpatches.Rectangle((x, y), w, h, fill=False, edgecolor='red', linewidth=1)
+        ax.add_patch(rect)
+    plt.show()
 
 if __name__ == "__main__":
     main()

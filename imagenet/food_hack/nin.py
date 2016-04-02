@@ -52,15 +52,21 @@ class NIN(chainer.Chain):
         h = F.max_pooling_2d(F.relu(self.mlpconv3(h)), 3, stride=2)
         h = self.mlpconv4(F.dropout(h, train=self.train))
         h = F.reshape(F.average_pooling_2d(h, 6), (x.data.shape[0], 1000))
-        # return F.softmax(h).data
+
+        sm = F.softmax(h).data
         answers = np.argmax(h.data, axis=1)
-        print answers
+
         #  chainer.Variable(xp.asarray([0]).astype(np.int32), volatile=volatile)
         t = chainer.Variable(answers.astype(np.int32), volatile='on')
+
+        # probs = []
+        # for i in range(len(x)):
+        #     probs.append(math.exp(-F.softmax_cross_entropy(chainer.Variable([h.data[i]]), chainer.Variable([t.data[i]])).data))
+
         sfe = F.softmax_cross_entropy(h, t).data
-        # print math.exp(-sfe)
-        print sfe
+        prob = math.exp(-sfe)
+
         # e_s = np.exp(h.data) # 各サンプルの各入力値の指数を取る
         # z_s = e_s.sum(axis=1) # 各サンプルごとに、指数の和を計算
         # probs = e_s[np.arange(len(e_s)), answers] / z_s # 各サ
-        return answers
+        return (answers[0], prob)
