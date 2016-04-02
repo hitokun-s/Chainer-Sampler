@@ -6,4 +6,10 @@ def getTargets():
         "n07734017", # tomato
         "n07747607", # orange
         "n07739125", # apple
+        "n07714990", # Broccoli
+        "n07749582", # lemon
+        "n07763629", # kiwi
+        "n07753592", # banana
+        "n07745940", # strawberry
+        "n07713074", # eggplant
     ]
