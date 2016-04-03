@@ -105,10 +105,10 @@ if __name__ == '__main__':
     boudingbox_xml_dir = args.bxmldir
     shouldSaveBoundingBoxImg = args.save_boundingbox
 
-    if not boundingbox_xml_file is None:
-        saveAsBoudingBoxImg(boundingbox_xml_file)
-
-    if not boudingbox_xml_dir is None:
-        allAnnotationFiles = scanAnnotationFolder(boudingbox_xml_dir)
-        for xmlfile in allAnnotationFiles:
-            saveAsBoudingBoxImg(xmlfile)
+    # if not boundingbox_xml_file is None:
+    #     saveAsBoudingBoxImg(boundingbox_xml_file)
+    #
+    # if not boudingbox_xml_dir is None:
+    #     allAnnotationFiles = scanAnnotationFolder(boudingbox_xml_dir)
+    #     for xmlfile in allAnnotationFiles:
+    #         saveAsBoudingBoxImg(xmlfile)
