@@ -55,11 +55,11 @@ if args.gpu >= 0:
 optimizer = optimizers.MomentumSGD(lr=0.01, momentum=0.9)
 optimizer.setup(model)
 
-serializers.load_npz(os.path.join(os.path.dirname(__file__), '../model'), model)
-serializers.load_npz(os.path.join(os.path.dirname(__file__), '../state'), optimizer)
+serializers.load_npz(os.path.join(os.path.dirname(__file__), 'model'), model)
+serializers.load_npz(os.path.join(os.path.dirname(__file__), 'state'), optimizer)
 
 
-mean_image = pickle.load(open("../mean.npy", 'rb'))
+mean_image = pickle.load(open("mean.npy", 'rb'))
 cropwidth = 256 - model.insize
 
 
@@ -89,16 +89,8 @@ def predict_core(img):
     x_batch[0] = img
     volatile = 'on'
     x = chainer.Variable(xp.asarray(x_batch), volatile=volatile)
-    t1 = chainer.Variable(xp.asarray([0]).astype(np.int32), volatile=volatile)
-    t2 = chainer.Variable(xp.asarray([1]).astype(np.int32), volatile=volatile)
-    t3 = chainer.Variable(xp.asarray([2]).astype(np.int32), volatile=volatile)
-
     return model.predict(x)
 
-    # print(model.predictor(x).data)
-    # print(model(x,t1).data)
-    # print(model(x,t2).data)
-    # print(model(x,t3).data)
 
 def predict_core_multi(imgs):
     x_batch = np.ndarray((len(imgs), 3, model.insize, model.insize), dtype=np.float32)

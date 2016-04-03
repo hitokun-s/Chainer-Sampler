@@ -8,6 +8,8 @@ from PIL import Image
 from skimage import io
 import os
 import predict as pd
+from flask import jsonify
+import json
 
 # arg: cropped PIL.Image object
 def resize(img):
@@ -69,16 +71,19 @@ def predict(img, pngFilePath=None):
     for rect in candidates:
         print rect
         cropped_img = resize(img.crop(rect))
-        if cropped_img is None:
-            continue
         print "cropped!"
         (answer, prob) = pd.predict_by_data(cropped_img)
         print "get answer and prob!"
         if prob > 0.9:
             res.append((rect,answer))
 
-    print "send back answers!"
-    return res
+    res2 = []
+    for t in res:
+        tmp ={}
+        tmp["rect"] = t[0]
+        tmp["class"] = int(str(t[1][0]))
+        res2.append(tmp)
+    print json.dumps(res2)
 
     # fig, ax = plt.subplots(ncols=1, nrows=1, figsize=(6, 6))
     # ax.imshow(img)
@@ -92,4 +97,4 @@ def predict(img, pngFilePath=None):
     # plt.show()
 
 if __name__ == "__main__":
-    print "don't call me directly"
+    predict(None, pngFilePath="tgt.png")

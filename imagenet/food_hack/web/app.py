@@ -8,6 +8,7 @@ from flask import Flask, request, send_from_directory
 from flask import jsonify
 import ssd
 from PIL import Image
+import json
 
 # add project base dir to module search path ( for importing char74k, originalOCR)
 tgt_dir = os.path.dirname(os.getcwd())
@@ -32,32 +33,39 @@ class_labels = list("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvw
 
 @app.route('/query', methods=['POST'])
 def query():
-
+    print "get query!"
     png_recovered = request.form["img"].decode("base64")
+    if png_recovered is None:
+        print "no data..."
+    else:
+        print "get data!"
 
     # cStringIOオブジェクト（ファイルのように文字列を読み書きできる）に変換する必要がある
     image_string = cStringIO.StringIO(png_recovered)
-    img = Image.open(image_string)
-    res = ssd.predict(img)
-    return jsonify(res)
-    #
-    # grayScaled = toGrayScale(numPyToPIL(img))
-    # standardized = standardize(grayScaled)
-    # grayed = pilToNumPy(standardized)
-    # grayed = binarize(grayed)  # 戻り値はndarray
-    # if should_invert(grayed):
-    #     grayed = invert(grayed)
-    # try:
-    #     prediction = predict(np.array([grayed]))
-    #     classIdx = prediction[0][0]
-    #     confidence = prediction[1][0]
-    #     answer = class_labels[classIdx]
-    #     print answer
-    # except:
-    #     print traceback.format_exc() # stacktrace
-    #
-    # return jsonify(dict(answer=answer, confidence=int(confidence * 100)))
+    print "here1"
 
+    # save as file
+    fh = open("tgt.png", "wb")
+    fh.write(png_recovered)
+    fh.close()
+
+    img = Image.open(image_string)
+    print "let's predict!"
+    res = []
+    try:
+        res = ssd.predict(img, pngFilePath="tgt.png")
+    except:
+        print "error!"
+        print "Unexpected error:", sys.exc_info()[0]
+    print res
+
+    res2 = []
+    for t in res:
+        tmp ={}
+        tmp["rect"] = t[0]
+        tmp["class"] = int(t[1][0])
+        res2.append(tmp)
+    return json.dumps(res2)
 
 if __name__ == '__main__':
     # app.run()

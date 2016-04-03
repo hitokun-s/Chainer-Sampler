@@ -106,9 +106,10 @@ var tp;
       canvas.height = height;
       context.drawImage(video, 0, 0, width, height);
     
-      var data = canvas.toDataURL('image/png');
-      photo.setAttribute('src', data);
+      var imgdata = canvas.toDataURL('image/png');
+      photo.setAttribute('src', imgdata);
       imgdata = imgdata.replace('data:image/png;base64,', '');  // 頭のいらない部分を落とす
+        console.log(imgdata);
       $.ajax({
                 type: "POST",
                 url: "query",
