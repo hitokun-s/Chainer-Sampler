@@ -81,7 +81,8 @@ for i, line in enumerate(open(args.dataset)):
         print "file:%s" % filepath
         print sys.exc_info()[0]
         continue
-
+    if image is None:
+        continue
     if sum_image is None:
         sum_image = numpy.ndarray(image.shape, dtype=numpy.float32)
         sum_image[:] = image

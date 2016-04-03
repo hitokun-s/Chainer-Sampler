@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>OCR</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" type="text/css" href="static/css/bootstrap.min.css">
+    <script type="text/javascript" src="static/js/jquery.min.js"></script>
+    <script type="text/javascript">
+        var canvas, ctx;
+
+        var clearImage = function(){
+            ctx.fillStyle = 'rgb(255, 255, 255)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            $("#answer").text("?");
+            $("#confidence").text("?");
+        }
+
+        window.onload = function () {
+            canvas = document.getElementById('canvas1');
+            if (!canvas || !canvas.getContext) {
+                return false;
+            }
+            ctx = canvas.getContext('2d');
+            clearImage();
+
+            var isDrawing = false;
+
+            document.ontouchmove = document.onmousemove = function (e) {
+                e.preventDefault();
+            }
+
+            canvas.ontouchmove = canvas.onmousemove = function (e) {
+                if (isDrawing) {
+                    ctx.beginPath();
+                    ctx.arc(e.pageX - canvas.offsetLeft, e.pageY - canvas.offsetTop, 10, 0, Math.PI * 2, false);
+                    ctx.stroke();
+                    ctx.fillStyle = '#000';
+                    ctx.fill();
+                }
+                e.preventDefault();
+            }
+            canvas.ontouchstart = canvas.onmousedown = function (e) {
+                isDrawing = true;
+            }
+            canvas.ontouchend = canvas.onmouseup = function (e) {
+                isDrawing = false;
+            }
+            canvas.onmouseout = function (e) {
+                isDrawing = false;
+            }
+        };
+
+        var saveImage = function() {
+            var imgdata = canvas.toDataURL("image/png");  // デフォルトだとpng, 引数でjpegとかも可能
+            imgdata = imgdata.replace('data:image/png;base64,', '');  // 頭のいらない部分を落とす
+            $.ajax({
+                type: "POST",
+                url: "query",
+                data: {"img": imgdata},
+                success: function (data) {
+                    $("#answer").text(data.answer);
+                    $("#confidence").text(data.confidence);
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log("got error!");
+                    alert(errorThrown);
+                }
+            });
+        }
+    </script>
+    <style>
+        html,body{
+            overflow: hidden;
+            height: 100%
+        }
+        body{
+            padding: 20px;
+        }
+        #canvas1{
+            border: solid 3px #000;
+        }
+        .center-block{
+            width:300px;
+            margin-top: 20px;
+        }
+        #answer-wrapper{
+            vertical-align: middle;
+            font-size: 1.5em;
+        }
+        #answer{
+            color: red;
+        }
+        #canvas1{
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>OCR</h1>
+    <p>Trained by Convolutional Neural Network.</p>
+    <p>Please write a single alphabet or number, and push 'Query'.</p>
+    <p>You will get an answer with confidence(%).</p>
+    <div class="center-block">
+        <canvas id="canvas1" width="300" height="300"></canvas>
+        <div>
+            <button class="btn btn-primary" onclick="saveImage();">Query</button>
+            <button class="btn btn-danger" onclick="clearImage();">Clear</button>
+            <text id="answer-wrapper">Answer:<span id="answer">?</span>(<span id="confidence">?</span>%)</text>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
