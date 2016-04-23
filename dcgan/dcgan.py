@@ -9,6 +9,8 @@ from StringIO import StringIO
 import math
 import pylab
 
+os.environ['PATH'] += ':/usr/local/cuda-7.0/bin:/usr/local/cuda-7.0/bin'
+
 import chainer
 from chainer import computational_graph
 from chainer import cuda
