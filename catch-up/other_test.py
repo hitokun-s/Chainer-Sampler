@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os, sys, traceback
+import os, sys, traceback, six
 
 # スクリプトとして実行された場合は、__nam__には"__main__"が入る
 # これによってモジュール呼び出しと区別できる
@@ -35,3 +35,9 @@ arr = xrange(0, 200, 10) # [0,10,20,30,...,.190]
 arr = xrange(0, 62, 62)
 for i in arr:
     print i
+
+range = six.moves.range(1, 5)
+print range
+range2 = xrange(1, 5)
+print range2
+

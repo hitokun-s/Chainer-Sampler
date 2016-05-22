@@ -44,7 +44,7 @@ parser.add_argument('--batchsize', '-B', type=int, default=32,
                     help='Learning minibatch size')
 parser.add_argument('--val_batchsize', '-b', type=int, default=250,
                     help='Validation minibatch size')
-parser.add_argument('--epoch', '-E', default=100, type=int,
+parser.add_argument('--epoch', '-E', default=20, type=int,
                     help='Number of epochs to learn')
 parser.add_argument('--gpu', '-g', default=0, type=int,
                     help='GPU ID (negative value indicates CPU)')

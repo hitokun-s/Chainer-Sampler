@@ -47,7 +47,7 @@ assert np.array_equal(arr4[:2], np.array([
 # ランダムに並び変える、ランダムサンプリング
 arr5 = np.array([1,2,3,4,5])
 perm = np.random.permutation(5)
-print perm # ランダムに並べたインデックス
+print "permutation:%s" % perm # ランダムに並べたインデックス
 print arr5[perm] # ランダムに並びかえたもの
 print arr5[perm[:2]] # ランダムに３つ取り出したもの
 
@@ -111,3 +111,10 @@ for i in range(10):
 perm = np.random.permutation(10)
 selected = x2[perm[:5]]
 print selected
+
+# reshape(構造変形)
+arr11 = np.arange(6)
+print arr11 # [0 1 2 3 4 5]
+arr11 = arr11.reshape((3, 2))
+print arr11 # [[0 1][2 3][4 5]]
+print arr11.reshape(6) # 直列化
