@@ -118,3 +118,26 @@ print arr11 # [0 1 2 3 4 5]
 arr11 = arr11.reshape((3, 2))
 print arr11 # [[0 1][2 3][4 5]]
 print arr11.reshape(6) # 直列化
+
+# 対象に最も近いものを探索
+tgt = np.array([
+    [5,5],[5,5]
+])
+samples = np.array([
+    [
+        [1,2],[2,2]
+    ],
+    [
+        [8,9],[10,11]
+    ],
+    [
+        [4,5],[6,5]
+    ],
+    [
+        [-1,0],[1,2]
+    ],
+])
+print [((sample - tgt) * (sample - tgt)).sum() for sample in samples]
+print np.argmin([((sample - tgt) * (sample - tgt)).sum() for sample in samples])
+
+print samples + tgt
