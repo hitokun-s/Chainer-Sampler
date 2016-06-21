@@ -5,6 +5,8 @@ import os, sys, traceback, six
 
 # スクリプトとして実行された場合は、__nam__には"__main__"が入る
 # これによってモジュール呼び出しと区別できる
+import random
+
 assert __name__ == "__main__"
 
 print __file__  # 本ファイルのパス
@@ -36,8 +38,17 @@ arr = xrange(0, 62, 62)
 for i in arr:
     print i
 
-range = six.moves.range(1, 5)
-print range
-range2 = xrange(1, 5)
-print range2
+
+for l in "test":
+    print l
+
+uuu = ["a","b","c"]
+print uuu + ["d","e"]
+print uuu + ["g"] # uuu + "g"はダメ！
+
+print random.sample([1,2,3,4,5], 2)
+print "+".join(["a", "b"])
+
+for i in range(5):
+    print (i + 1) % 3 == 0
 

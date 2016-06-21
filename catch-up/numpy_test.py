@@ -141,3 +141,8 @@ print [((sample - tgt) * (sample - tgt)).sum() for sample in samples]
 print np.argmin([((sample - tgt) * (sample - tgt)).sum() for sample in samples])
 
 print samples + tgt
+
+print np.mean([
+    [1,2],
+    [6,5]
+],1)
